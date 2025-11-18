@@ -13,6 +13,8 @@ DROP TABLE IF EXISTS course_instance CASCADE;
 DROP TABLE IF EXISTS course_layout CASCADE;
 DROP TABLE IF EXISTS rules CASCADE;
 DROP TABLE IF EXISTS teaching_activity CASCADE;
+DROP TABLE IF EXISTS exam_hours_factors CASCADE;
+DROP TABLE IF EXISTS admin_hours_factors CASCADE;
 
 
 --CREATE TYPE period AS ENUM ('1', '2', '3', '4');
@@ -38,8 +40,6 @@ CREATE TABLE course_instance (
 	num_students INT NOT NULL,
 	study_year VARCHAR(4) NOT NULL,
 	course_layout_id INT NOT NULL,
-	exam_hours_d NUMERIC,
-	admin_hours_d NUMERIC
 );
 
 CREATE TABLE course_layout (
@@ -58,8 +58,31 @@ CREATE TABLE rules (
 	allocation_limit INT
 );
 
+CREATE TABLE exam_hours_factors (
+	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	exam_f1 DECIMAL(5,3),
+	exam_f2 DECIMAL(5,3)
+);
+
+CREATE TABLE admin_hours_factors (
+	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	admin_f1 DECIMAL(5,3),
+	admin_f2 DECIMAL(5,3),
+	admin_f3 DECIMAL(5,3)
+);
+
 INSERT INTO rules (allocation_limit)
 VALUES (4);
+
+
+--Examination hour = 32+ 0.725* #Students 
+INSERT INTO exam_hours_factors (exam_f1, exam_f2)
+VALUES (32, 0.725); 
+
+
+--Admin hours = 2*HP+ 28+ 0.2* #Students 
+INSERT INTO admin_hours_factors (admin_f1, admin_f2, admin_f3)
+VALUES (2, 28, 0.2);
 
 --course_instance
 ALTER TABLE course_instance
@@ -84,7 +107,7 @@ CREATE TABLE job_title (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	job_title VARCHAR(50) NOT NULL UNIQUE
 );
---??? where manager id
+
 CREATE TABLE department (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	department_name VARCHAR(50) NOT NULL UNIQUE,
