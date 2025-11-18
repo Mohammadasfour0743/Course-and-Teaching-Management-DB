@@ -39,7 +39,7 @@ CREATE TABLE course_instance (
 	instance_id VARCHAR(50) UNIQUE NOT NULL,
 	num_students INT NOT NULL,
 	study_year VARCHAR(4) NOT NULL,
-	course_layout_id INT NOT NULL,
+	course_layout_id INT NOT NULL
 );
 
 CREATE TABLE course_layout (
@@ -49,7 +49,7 @@ CREATE TABLE course_layout (
 	min_students INT NOT NULL,
 	max_students INT NOT NULL,
 	hp DECIMAL(3,1),
-	is_active BOOLEAN NOT NULL,
+	is_active BOOLEAN DEFAULT TRUE,
 	study_period period NOT NULL
 );
 

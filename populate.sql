@@ -14,11 +14,11 @@ VALUES
 ('DH2620', 'Operating Systems', 15, 80, 7.5, TRUE, '1');
 
 
-INSERT INTO course_instance (instance_id, num_students, study_year, course_layout_id, exam_hours_d, admin_hours_d)
+INSERT INTO course_instance (instance_id, num_students, study_year, course_layout_id)
 VALUES
-('MD2025-1', 45, '2025', 1, 10, 5),
-('ALGO2025-1', 80, '2025', 3, 15, 8),
-('OS2025-1', 30, '2025', 4, 12, 6);
+('MD2025-1', 45, '2025', 1),
+('ALGO2025-1', 80, '2025', 3),
+('OS2025-1', 30, '2025', 4);
 
 
 
@@ -137,13 +137,15 @@ VALUES
 (3, 1);
 
 
-INSERT INTO course_instance (instance_id, num_students, study_year, course_layout_id)
-SELECT 'MD2025-2', 55, 2025, id
+
+
+
+INSERT INTO course_instance (num_students, study_year, course_layout_id)
+SELECT  45, 2025, id
 FROM course_layout
-WHERE course_code='DH2642' AND study_period = '1' AND is_active = TRUE
+WHERE course_code='DH2620' AND study_period = '1' AND is_active = TRUE
 ORDER BY course_layout.id DESC 
 LIMIT 1;
-
 
 
 
