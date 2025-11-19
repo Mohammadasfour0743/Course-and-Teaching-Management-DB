@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS exam_hours_factors CASCADE;
 DROP TABLE IF EXISTS admin_hours_factors CASCADE;
 
 
---CREATE TYPE period AS ENUM ('1', '2', '3', '4');
+CREATE TYPE period AS ENUM ('1', '2', '3', '4');
 
 
 CREATE TABLE teaching_activity (
@@ -140,7 +140,7 @@ CREATE TABLE person (
 
 CREATE TABLE employee (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	employment_id VARCHAR(30) NOT NULL UNIQUE,
+	employment_id VARCHAR(30) UNIQUE NOT NULL,
 	job_title_id INT NOT NULL,
 	person_id INT NOT NULL,
 	department_id INT NOT NULL,

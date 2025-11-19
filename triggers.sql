@@ -1,4 +1,21 @@
 
+--generate employee id
+CREATE OR REPLACE FUNCTION generate_employee_id()
+RETURNS TRIGGER AS $$
+
+BEGIN
+
+    NEW.employment_id :=  'EMP-' || SUBSTRING(MD5(random()::text || clock_timestamp()::text) FROM 1 FOR 4);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER generate_employee_id
+BEFORE INSERT ON employee
+FOR EACH ROW
+EXECUTE FUNCTION generate_employee_id();
+
+
 
 
 --generate course instance id
@@ -12,7 +29,7 @@ BEGIN
 	WHERE NEW.course_layout_id = course_layout.id;
 
 
-    NEW.instance_id := NEW.study_year || '-' || code || '-' || floor(random() * 1000)::int;
+    NEW.instance_id := NEW.study_year || '-' || code || '-' || SUBSTRING(MD5(random()::text || clock_timestamp()::text) FROM 1 FOR 4);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
