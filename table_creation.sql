@@ -140,12 +140,12 @@ CREATE TABLE person (
 
 CREATE TABLE employee (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	employment_id VARCHAR(30) UNIQUE NOT NULL,
+	employment_id INT GENERATED ALWAYS AS IDENTITY,
 	job_title_id INT NOT NULL,
 	person_id INT NOT NULL,
 	department_id INT NOT NULL,
 	manager_id INT,
-	is_active BOOLEAN DEFAULT TRUE
+	is_active BOOLEAN
 );
 
 CREATE TABLE employee_skill_set (
