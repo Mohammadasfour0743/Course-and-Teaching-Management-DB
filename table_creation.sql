@@ -145,7 +145,7 @@ CREATE TABLE employee (
 	person_id INT NOT NULL,
 	department_id INT NOT NULL,
 	manager_id INT,
-	is_active BOOLEAN
+	is_active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE employee_skill_set (
