@@ -1,9 +1,12 @@
 INSERT INTO teaching_activity (activity_name, factor)
 VALUES 
-('Lecture', 3.75),
-('Seminar', 1.75),
-('Lab', 1.25),
-('Tutorial', 1.50);
+('Lecture', 3.6),
+('Seminar', 1.8),
+('Lab', 2.4),
+('Tutorial', 2.4),
+('Overhead', 1.2),
+('Examination',1),
+('Administration', 1);
 
 
 INSERT INTO course_layout (course_code, course_name, min_students, max_students, hp, is_active, study_period)
@@ -27,6 +30,8 @@ VALUES
 ( 55, '2025', 6),
 ( 40, '2025', 7),
 ( 95, '2025', 8);
+
+SELECT * FROM course_instance;
 
 
 

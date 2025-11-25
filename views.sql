@@ -1,4 +1,4 @@
-
+/*
 --examination hours
 CREATE OR REPLACE VIEW examination_hours AS
 SELECT ci.id, cl.course_code, ci.instance_id, cl.course_name,
@@ -18,3 +18,4 @@ SELECT ci.id, cl.course_code, ci.instance_id, cl.course_name,
 FROM course_instance AS ci
 JOIN course_layout AS cl ON ci.course_layout_id = cl.id
 JOIN admin_hours_factors AS af ON af.id = (SELECT MAX(id) FROM admin_hours_factors);
+*/

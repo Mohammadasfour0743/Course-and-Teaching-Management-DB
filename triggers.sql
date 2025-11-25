@@ -1,3 +1,60 @@
+--automatically calcualte and assign exam hours to one teacher
+CREATE OR REPLACE FUNCTION calculate_exam_hours()
+RETURNS TRIGGER AS $$
+BEGIN
+	  DELETE FROM planned_activity
+      WHERE course_instance_id = NEW.id
+      AND teaching_activity_id = (SELECT id FROM teaching_activity WHERE activity_name = 'Examination');
+
+	
+	INSERT INTO planned_activity(course_instance_id, planned_hours, teaching_activity_id)
+		SELECT NEW.id, ef.exam_f1 + ef.exam_f2*NEW.num_students,ta.id
+		FROM teaching_activity AS ta
+		CROSS JOIN exam_hours_factors AS ef
+		
+        WHERE ta.activity_name = 'Examination'
+      		AND ef.id = (SELECT MAX(id) FROM exam_hours_factors);
+		RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calc_exam_hours
+AFTER INSERT OR UPDATE ON course_instance
+FOR EACH ROW
+EXECUTE FUNCTION calculate_exam_hours();
+
+
+
+--automatically calcualte and assign admin hours to one teacher
+CREATE OR REPLACE FUNCTION calculate_admin_hours()
+RETURNS TRIGGER AS $$
+
+BEGIN
+	DELETE FROM planned_activity
+    WHERE course_instance_id = NEW.id
+    AND teaching_activity_id = (SELECT id FROM teaching_activity WHERE activity_name = 'Administration');
+    
+	INSERT INTO planned_activity(course_instance_id, planned_hours, teaching_activity_id)
+		SELECT NEW.id, af.admin_f1*cl.hp +af.admin_f2 + af.admin_f3*NEW.num_students ,ta.id
+		FROM teaching_activity AS ta
+		CROSS JOIN admin_hours_factors AS af
+		JOIN course_layout AS cl ON cl.id = NEW.course_layout_id
+		
+        WHERE ta.activity_name = 'Administration'
+      		AND af.id = (SELECT MAX(id) FROM admin_hours_factors);
+		RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calc_admin_hours
+AFTER INSERT OR UPDATE ON course_instance
+FOR EACH ROW
+EXECUTE FUNCTION calculate_admin_hours();
+
+
+
+
+
 
 --generate course instance id
 CREATE OR REPLACE FUNCTION generate_course_instance_id()
