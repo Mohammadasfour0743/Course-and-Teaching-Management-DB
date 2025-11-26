@@ -1,3 +1,5 @@
+
+-- 1) Teaching activities
 INSERT INTO teaching_activity (activity_name, factor)
 VALUES 
 ('Lecture', 3.6),
@@ -9,6 +11,7 @@ VALUES
 ('Administration', 1);
 
 
+-- 2) Course layouts
 INSERT INTO course_layout (course_code, course_name, min_students, max_students, hp, is_active, study_period)
 VALUES
 ('DH2642', 'Mobile Development', 10, 60, 7.5, TRUE, '1'),
@@ -21,6 +24,7 @@ VALUES
 ('DH2600', 'Databases', 15, 100, 7.5, TRUE, '2');
 
 
+-- 3) Course instances
 INSERT INTO course_instance ( num_students, study_year, course_layout_id)
 VALUES
 ( 45, '2025', 1),
@@ -31,49 +35,42 @@ VALUES
 ( 40, '2025', 7),
 ( 95, '2025', 8);
 
-SELECT * FROM course_instance;
 
-
-
-
+-- 4) Planned activities
 INSERT INTO planned_activity (course_instance_id, planned_hours, teaching_activity_id)
 VALUES
--- Mobile Development
+-- Mobile Development (course_instance_id = 1)
 (1, 20, 1),  -- Lecture
 (1, 10, 2),  -- Seminar
 (1, 15, 3),  -- Lab
 
--- Algorithms and Data Structures
+-- Algorithms and Data Structures (instance 2)
 (2, 25, 1),
 (2, 20, 2),
 
--- Operating Systems
+-- Operating Systems (instance 3)
 (3, 18, 1),
 (3, 12, 3),
 
--- Computer Networks
+-- Computer Networks (instance 4)
 (4, 22, 1),
 (4, 12, 3),
 
--- Distributed Systems
+-- Distributed Systems (instance 5)
 (5, 30, 1),
 (5, 10, 2),
 (5, 15, 3),
 
--- HCI
+-- HCI (instance 6)
 (6, 18, 1),
 (6, 20, 2),
 
--- ML
+-- ML (instance 7)
 (7, 25, 1),
 (7, 20, 2),
 (7, 18, 3);
 
-
-
-
-
-
+-- 5) Job titles
 INSERT INTO job_title (job_title)
 VALUES
 ('Lecturer'),
@@ -82,7 +79,7 @@ VALUES
 ('Administrator');
 
 
-
+-- 6) Persons
 INSERT INTO person (personal_number, first_name, last_name, street, ZIP)
 VALUES
 ('199001011234', 'Anna', 'Svensson', 'Sveavägen 12', '11122'),
@@ -101,13 +98,14 @@ VALUES
 ('199811242277', 'Niklas', 'Borg', 'Torsgatan 52', '11337');
 
 
+-- 7) Departments
 INSERT INTO department (department_name, manager_id)
 VALUES
 ('Computer Science', NULL),
 ('Engineering', NULL);
 
 
-
+-- 8) Employees
 INSERT INTO employee ( job_title_id, person_id, department_id, manager_id, is_active)
 VALUES 
 ( 2, 1, 1, NULL, TRUE),
@@ -122,7 +120,7 @@ VALUES
 ( 3, 10, 2, 4, TRUE),
 ( 1, 11, 1, 1, TRUE),
 ( 2, 12, 1, 1, TRUE),
-(3, 13, 1, 1, TRUE),
+( 3, 13, 1, 1, TRUE),
 ( 4, 14, 2, 4, TRUE);    -- Karl admin
 
 
@@ -130,6 +128,7 @@ UPDATE department SET manager_id = 1 WHERE id = 1;  -- CS manager = Anna
 UPDATE department SET manager_id = 4 WHERE id = 2;  -- Eng manager = Karl
 
 
+-- 9) Salary (simple VALUES insert - no ambiguity)
 INSERT INTO salary (salary_amount, date_given, employee_id)
 VALUES
 (45000, CURRENT_DATE, 1),
@@ -148,6 +147,7 @@ VALUES
 (36500, CURRENT_DATE, 14);
 
 
+-- 10) Phones
 INSERT INTO phone (phone_number)
 VALUES
 ('0701234567'),
@@ -166,6 +166,7 @@ VALUES
 ('0720001122');
 
 
+-- 11) person_phone
 INSERT INTO person_phone (person_id, phone_id)
 VALUES
 (1, 1),
@@ -184,6 +185,7 @@ VALUES
 (14, 14);
 
 
+-- 12) Skill set
 INSERT INTO skill_set (skill)
 VALUES
 ('Java'),
@@ -198,6 +200,7 @@ VALUES
 ('Network Design');
 
 
+-- 13) employee_skill_set
 INSERT INTO employee_skill_set (skill_set_id, employee_id)
 VALUES
 (1, 1),
@@ -217,50 +220,147 @@ VALUES
 (10, 13);
 
 
-
+-- 14) employee_planned_activity
+-- FIXED: assign only the correct planned_activity IDs for DH2642
+-- (assuming the planned_activity rows inserted earlier produced ids 1,2,3 for DH2642)
 INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
 VALUES
--- Anna teaches lectures
+-- Anna teaches Lecture (pa.id = 1)
 (1, 1),
-(1, 2),
-(1, 3),
 
--- Erik teaches seminars
+-- Erik teaches Seminar (pa.id = 2)
 (2, 2),
-(2, 3),
 
--- Maria handles labs
+-- Maria handles Lab (pa.id = 3)
 (3, 3),
-(3, 1),
+
+-- Keep other mappings from your original script (these are example rows,
+-- adjust or remove according to what planned_activity rows exist in your DB)
 (5, 4),
 (5, 5),
 (6, 6),
-
 (7, 7),
 (7, 8),
-
 (8, 9),
 (9, 10),
 (10, 11),
-
 (11, 12);
 
 
+-- DH2642 – Mobile Development (instance_id = the one linked to course_layout 1)
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 1, pa.id  -- Anna → Lecture
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 1 AND ta.activity_name = 'Lecture';
 
-INSERT INTO course_instance (num_students, study_year, course_layout_id)
-SELECT  45, 2025, id
-FROM course_layout
-WHERE course_code='DH2620' AND study_period = '1' AND is_active = TRUE
-ORDER BY course_layout.id DESC 
-LIMIT 1;
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 2, pa.id  -- Erik → Seminar
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 1 AND ta.activity_name = 'Seminar';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 3, pa.id  -- Maria → Lab
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 1 AND ta.activity_name = 'Lab';
 
 
+-- DH2401 – Algorithms (instance 2)
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 5, pa.id  -- Sofia → Lecture
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 2 AND ta.activity_name='Lecture';
 
-INSERT INTO salary(salary_amount, date_given, employee_id)
-SELECT 87000,CURRENT_DATE, id
-FROM person AS p
-WHERE first_name = 'Anna' AND last_name = 'Svensson';
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 6, pa.id  -- Jonas → Seminar
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 2 AND ta.activity_name='Seminar';
 
+
+-- DH2620 – Operating Systems (instance 3)
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 7, pa.id  -- Emma → Lecture
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 3 AND ta.activity_name='Lecture';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 8, pa.id  -- Daniel → Lab
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 3 AND ta.activity_name='Lab';
+
+
+-- DH2005 – Networks (instance 4)
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 9, pa.id  -- Johanna → Lecture
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 4 AND ta.activity_name='Lecture';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 10, pa.id  -- Lars → Lab
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 4 AND ta.activity_name='Lab';
+
+
+-- DH2010 – Distributed Systems (instance 5)
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 11, pa.id  -- Frida → Lecture
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 5 AND ta.activity_name='Lecture';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 12, pa.id  -- Oscar → Seminar
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 5 AND ta.activity_name='Seminar';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 13, pa.id  -- Helena → Lab
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 5 AND ta.activity_name='Lab';
+
+
+-- DH2100 – HCI (instance 6)
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 1, pa.id  -- Anna → Lecture
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 6 AND ta.activity_name='Lecture';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 5, pa.id  -- Sofia → Seminar
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 6 AND ta.activity_name='Seminar';
+
+
+-- DH2500 – ML (instance 7)
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 14, pa.id  -- Niklas → Lecture
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 7 AND ta.activity_name='Lecture';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 6, pa.id  -- Jonas → Seminar
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 7 AND ta.activity_name='Seminar';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 7, pa.id  -- Emma → Lab
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 7 AND ta.activity_name='Lab';
+
+-- DH2600 – ML (instance 7) Administration
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 14, pa.id  -- Example: Anna
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 7 AND ta.activity_name = 'Administration';
+
+-- DH2600 – ML (instance 7) Exam
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 7, pa.id  -- Example: Erik
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 7 AND ta.activity_name = 'Examination';;
 
 
 
