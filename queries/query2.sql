@@ -25,7 +25,7 @@ LEFT JOIN person ON emp.person_id = person.id
 LEFT JOIN teaching_activity AS ta ON ta.id = pa.teaching_activity_id
 LEFT JOIN job_title AS jt ON emp.job_title_id = jt.id
 
-WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND cl.course_code = 'DH2620' 
+WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND cl.course_code = 'DH2642' 
 GROUP BY cl.course_code, 
 	ci.instance_id,
 	cl.hp,

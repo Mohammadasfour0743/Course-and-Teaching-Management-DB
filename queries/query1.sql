@@ -22,6 +22,6 @@ JOIN course_layout AS cl ON ci.course_layout_id = cl.id
 LEFT JOIN planned_activity AS pa ON pa.course_instance_id = ci.id
 LEFT JOIN teaching_activity AS ta ON pa.teaching_activity_id = ta.id
 
-WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND cl.course_code = 'DH2642'
+WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY')
 GROUP BY cl.course_code, ci.instance_id, cl.hp, cl.study_period, ci.num_students;
 

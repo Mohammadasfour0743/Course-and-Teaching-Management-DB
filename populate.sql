@@ -70,6 +70,24 @@ VALUES
 (7, 20, 2),
 (7, 18, 3);
 
+-- Course 4, new Tutorial activity
+INSERT INTO planned_activity (course_instance_id, planned_hours, teaching_activity_id)
+VALUES (4, 12, (SELECT id FROM teaching_activity WHERE activity_name = 'Tutorial'));
+
+-- Course 4, new Seminar activity
+INSERT INTO planned_activity (course_instance_id, planned_hours, teaching_activity_id)
+VALUES (4, 8, (SELECT id FROM teaching_activity WHERE activity_name = 'Seminar'));
+
+
+-- Course 5, new Tutorial activity
+INSERT INTO planned_activity (course_instance_id, planned_hours, teaching_activity_id)
+VALUES (5, 10, (SELECT id FROM teaching_activity WHERE activity_name = 'Tutorial'));
+
+-- Course 5, new Overhead activity
+INSERT INTO planned_activity (course_instance_id, planned_hours, teaching_activity_id)
+VALUES (5, 6, (SELECT id FROM teaching_activity WHERE activity_name = 'Overhead'));
+
+
 -- 5) Job titles
 INSERT INTO job_title (job_title)
 VALUES
@@ -291,6 +309,11 @@ FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity
 WHERE pa.course_instance_id = 3 AND ta.activity_name='Lab';
 
 
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 3, pa.id  -- Maria
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 3 AND ta.activity_name='Overhead';
+
 -- DH2005 – Networks (instance 4)
 INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
 SELECT 9, pa.id  -- Johanna → Lecture
@@ -331,6 +354,11 @@ SELECT 5, pa.id  -- Sofia → Seminar
 FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
 WHERE pa.course_instance_id = 6 AND ta.activity_name='Seminar';
 
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 3, pa.id  -- Maria
+FROM planned_activity pa JOIN teaching_activity ta ON ta.id=pa.teaching_activity_id
+WHERE pa.course_instance_id = 6 AND ta.activity_name='Lab';
+
 
 -- DH2500 – ML (instance 7)
 INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
@@ -360,7 +388,33 @@ INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
 SELECT 7, pa.id  -- Example: Erik
 FROM planned_activity pa
 JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
-WHERE pa.course_instance_id = 7 AND ta.activity_name = 'Examination';;
+WHERE pa.course_instance_id = 7 AND ta.activity_name = 'Examination';
 
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 3, pa.id
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 4 AND ta.activity_name = 'Tutorial';
+
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 3, pa.id
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 4 AND ta.activity_name = 'Seminar';
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 3, pa.id --6
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 5 AND ta.activity_name = 'Tutorial';
+
+
+INSERT INTO employee_planned_activity (employee_id, planned_activity_id)
+SELECT 13, pa.id --13
+FROM planned_activity pa
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+WHERE pa.course_instance_id = 5 AND ta.activity_name = 'Overhead';
 
 

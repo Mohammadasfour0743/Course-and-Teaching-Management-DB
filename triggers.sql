@@ -118,7 +118,7 @@ BEGIN
     LIMIT 1;
 
 --count existing activities for this employee in the same period
-    SELECT COUNT(*)
+    SELECT COUNT(DISTINCT ci.id)
     INTO activity_count
     FROM employee_planned_activity epa
     JOIN planned_activity pa ON epa.planned_activity_id = pa.id
