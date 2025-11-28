@@ -11,4 +11,4 @@ JOIN course_layout cl ON cl.id = ci.course_layout_id
 WHERE cl.study_period = '1' --period
 GROUP BY 
 e.employment_id, p.first_name, p.last_name, cl.study_period
-HAVING COUNT(DISTINCT ci.id) > 1 --number
+HAVING COUNT(DISTINCT ci.id) > 1 ;--number

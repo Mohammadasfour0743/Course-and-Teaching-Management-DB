@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS exam_hours_factors CASCADE;
 DROP TABLE IF EXISTS admin_hours_factors CASCADE;
 
 
---CREATE TYPE period AS ENUM ('1', '2', '3', '4');
+CREATE TYPE period AS ENUM ('1', '2', '3', '4');
 
 
 CREATE TABLE teaching_activity (
@@ -163,6 +163,7 @@ CREATE TABLE person_phone (
 CREATE TABLE employee_planned_activity (
 	employee_id INT NOT NULL,
 	planned_activity_id INT,
+	allocated_hours INT,
 	PRIMARY KEY(employee_id,planned_activity_id)
 );
 
@@ -233,13 +234,6 @@ ALTER TABLE employee_planned_activity
 ADD CONSTRAINT fk_planned_activity_id
 FOREIGN KEY (planned_activity_id) 
 REFERENCES planned_activity(id);
-
-
-
-
-
-
-
 
 
 

@@ -1,4 +1,40 @@
 
+--Check that total allocated hours for an activity is less than the planned hours
+CREATE OR REPLACE FUNCTION validate_allocated_hours()
+RETURNS TRIGGER AS $$
+DECLARE
+    total_allocated INT;
+    total_planned INT;
+BEGIN
+    -- Get total planned hours for this activity
+    SELECT planned_hours INTO total_planned
+    FROM planned_activity
+    WHERE id = NEW.planned_activity_id;
+    
+    --Calculate total allocated hours (including this new allocation)
+    SELECT COALESCE(SUM(allocated_hours), 0) + NEW.allocated_hours
+    INTO total_allocated
+    FROM employee_planned_activity
+    WHERE planned_activity_id = NEW.planned_activity_id
+      AND (employee_id != NEW.employee_id OR TG_OP = 'INSERT');
+    
+    
+    IF total_allocated > total_planned THEN
+        RAISE EXCEPTION 'Total allocated hours (%) exceeds planned hours (%) for planned_activity_id %',
+            total_allocated, total_planned, NEW.planned_activity_id;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER validate_allocated_hours
+BEFORE INSERT OR UPDATE ON employee_planned_activity
+FOR EACH ROW
+EXECUTE FUNCTION validate_allocated_hours();
+
+
+
 
 --automatically calcualte and assign exam hours to one teacher
 CREATE OR REPLACE FUNCTION calculate_exam_hours()
