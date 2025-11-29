@@ -1,4 +1,3 @@
-
 SELECT 
 	cl.course_code, 
 	ci.instance_id,
@@ -7,7 +6,7 @@ SELECT
 	jt.job_title,
     COALESCE(SUM(CASE WHEN ta.activity_name = 'Lecture'  THEN emp_pa.allocated_hours * ta.factor END),0) AS lecture_hours,
     COALESCE(SUM(CASE WHEN ta.activity_name = 'Tutorial' THEN emp_pa.allocated_hours * ta.factor END),0) AS tutorial_hours,
-    COALESCE(SUM(CASE WHEN ta.activity_name = 'Lab'      THEN emp_pa.allocated_hours * ta.factor END),0) AS lab_hours,
+    COALESCE(SUM(CASE WHEN ta.activity_name = 'Lab'  THEN emp_pa.allocated_hours * ta.factor END),0) AS lab_hours,
     COALESCE(SUM(CASE WHEN ta.activity_name = 'Seminar'  THEN emp_pa.allocated_hours * ta.factor END), 0) AS seminar_hours,
     COALESCE(SUM(CASE WHEN ta.activity_name = 'Examination' THEN emp_pa.allocated_hours * ta.factor END), 0) AS exam_hours,
     COALESCE(SUM(CASE WHEN ta.activity_name = 'Administration' THEN emp_pa.allocated_hours * ta.factor END), 0) AS admin_hours,
@@ -17,13 +16,13 @@ SELECT
 	COALESCE(SUM(emp_pa.allocated_hours * ta.factor), 0) AS total_hours
 
 FROM employee_planned_activity AS emp_pa
-LEFT JOIN planned_activity AS pa ON pa.id = emp_pa.planned_activity_id
-LEFT JOIN course_instance AS ci ON ci.id = pa.course_instance_id
-LEFT JOIN course_layout AS cl ON ci.course_layout_id = cl.id
-LEFT JOIN employee AS emp ON emp.id = emp_pa.employee_id
-LEFT JOIN person ON emp.person_id = person.id
-LEFT JOIN teaching_activity AS ta ON ta.id = pa.teaching_activity_id
-LEFT JOIN job_title AS jt ON emp.job_title_id = jt.id
+JOIN planned_activity AS pa ON pa.id = emp_pa.planned_activity_id
+JOIN course_instance AS ci ON ci.id = pa.course_instance_id
+JOIN course_layout AS cl ON ci.course_layout_id = cl.id
+JOIN employee AS emp ON emp.id = emp_pa.employee_id
+JOIN person ON emp.person_id = person.id
+JOIN teaching_activity AS ta ON ta.id = pa.teaching_activity_id
+JOIN job_title AS jt ON emp.job_title_id = jt.id
 
 WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND cl.course_code = 'DH2500'
 GROUP BY cl.course_code, 
