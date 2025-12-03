@@ -1,0 +1,50 @@
+# Ignore Visual Studio temporary files, build results, and .NET caches
+
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore Rider / JetBrains IDE files
+
+.idea/
+
+# Ignore VS Code workspace settings
+
+.vscode/
+
+# Ignore NuGet packages
+
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Ignore environment files
+
+.env
+.env.*   # any additional .env variants, e.g., .env.local
+
+# Ignore logs
+
+*.log
+
+# Ignore temporary files
+
+*.tmp
+*.temp
+
+# Ignore Rider caches
+
+.idea/
+
+# Ignore dotnet publish output
+
+publish/
+
+# Ignore ReSharper caches
+
+_ReSharper*/
+*.DotSettings.user
