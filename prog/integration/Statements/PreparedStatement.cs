@@ -13,9 +13,9 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         return new PreparedStatement(cmd);
     }
 
-    public PreparedStatement AddParameter(string name, NpgsqlDbType value)
+    public PreparedStatement AddParameter(string name, NpgsqlDbType type)
     {
-        Command.Parameters.Add(name, value);
+        Command.Parameters.Add(name, type);
         return this;
     }
 
@@ -26,9 +26,18 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
     }
     public PreparedStatement WithParameter(string name, object value)
     {
-        Command.Parameters.AddWithValue(name, value ?? DBNull.Value);
+        if (Command.Parameters.Contains(name))
+        {
+            Command.Parameters[name].Value = value ?? DBNull.Value;
+        }
+        else
+        {
+            Command.Parameters.AddWithValue(name, value ?? DBNull.Value);
+            Prepare();
+        }
         return this;
     }
+    //dont think we need to clear but gotta check docs
     public T? ExecuteScalar<T>(NpgsqlTransaction? transaction = null)
     {
         Command.Transaction = transaction;
@@ -40,7 +49,7 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         }
         finally
         {
-            Command.Parameters.Clear();
+           // Command.Parameters.Clear();
             Command.Transaction = null;
         }
     }
@@ -54,7 +63,7 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         }
         finally
         {
-            Command.Parameters.Clear();
+            //Command.Parameters.Clear();
             Command.Transaction = null;
         }
     }
@@ -70,7 +79,7 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         }
         finally
         {
-            Command.Parameters.Clear();
+            //Command.Parameters.Clear();
             Command.Transaction = null;
         }
     }

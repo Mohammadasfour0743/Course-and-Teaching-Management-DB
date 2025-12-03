@@ -26,7 +26,7 @@ public class DbContext : IDisposable
     private void CreatePreparedStatements()
     {
         _getPersonStmt = PreparedStatement.Create(DbConnection,StatementStrings.Getpersonbylastname)
-            .AddParameter("@last_name",NpgsqlDbType.Varchar).Prepare();
+            .AddParameter("last_name",NpgsqlDbType.Varchar).Prepare();
         _listPeopleStmt = PreparedStatement.Create(DbConnection, StatementStrings.Listpeople).Prepare();
     }
 
