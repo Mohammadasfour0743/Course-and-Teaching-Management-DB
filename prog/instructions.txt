@@ -1,0 +1,33 @@
+to create a list function:
+-first create a prepared statement:
+--define the query inside StatementStrings.cs
+--define name as private in DbContext
+
+-define function inside DbContext
+
+-Go to controller, create the function that will be seen by the view
+
+-go to ListCommands (for operations other than List, create another class) and handle it there
+
+
+To query fast in program.cs:
+        using var ttmm = PreparedStatement.Create(dbContext.DbConnection,"SELECT * FROM salary").ExecuteReader();
+        while (ttmm.Read())
+        {
+            Console.WriteLine(ttmm.GetInt32(ttmm.GetOrdinal("salary_amount")));
+        }
+
+
+
+to create new model:
+-write the types and atttributes
+-make it geenrate IEquatable
+-Write toString
+
+
+
+
+
+DTO:
+created as records, cannot be changed
+between the (), write the attributes that can be fetched from view

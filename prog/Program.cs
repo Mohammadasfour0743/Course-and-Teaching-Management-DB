@@ -1,4 +1,5 @@
 ﻿using DbCourse.Integration;
+using DbCourse.Integration.Statements;
 using DbCourse.View;
 using DotNetEnv;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +12,7 @@ class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
        
-        Env.Load("../../../.env");
+        Env.Load("C:\\Users\\Mohammad Asfour\\Desktop\\Course-and-Teaching-Management-DB\\prog\\.env");
         string connectionString = Env.GetString("CONNECTION_STRING");
         if (string.IsNullOrWhiteSpace(connectionString))
         {

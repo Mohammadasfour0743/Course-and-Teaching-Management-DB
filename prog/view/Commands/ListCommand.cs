@@ -2,7 +2,7 @@ namespace DbCourse.View.Commands;
 
 public class ListCommand(string? option = null) : ICommand
 {
-    
+
     public void Execute(Controller.Controller controller)
     {
         switch (option)
@@ -11,6 +11,12 @@ public class ListCommand(string? option = null) : ICommand
                 foreach (var person in controller.GetPeople())
                 {
                     Console.WriteLine(person);
+                }
+                break;
+            case "employee":
+                foreach (var emp in controller.GetEmployees(true))
+                {
+                    Console.WriteLine(emp);
                 }
                 break;
             default:
@@ -22,6 +28,6 @@ public class ListCommand(string? option = null) : ICommand
 
     public void PrintHelp()
     {
-        Console.WriteLine("Lists a table - Usage: list <people/...>");
+        Console.WriteLine("Lists a table - Usage: list <people/employee>");
     }
 }

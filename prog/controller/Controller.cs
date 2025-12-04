@@ -9,6 +9,12 @@ public class Controller(DbContext dbContext)
     {
         return dbContext.GetPeople();
     }
+
+    public List<Employee> GetEmployees(bool? isActive)
+    {
+        return dbContext.GetEmployees(isActive);
+    }
+    
     public void Commit() => dbContext.Commit();
     public void Rollback() => dbContext.Rollback();
 }
