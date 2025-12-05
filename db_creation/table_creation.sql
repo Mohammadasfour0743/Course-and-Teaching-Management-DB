@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS exam_hours_factors CASCADE;
 DROP TABLE IF EXISTS admin_hours_factors CASCADE;
 
 
-CREATE TYPE period AS ENUM ('1', '2', '3', '4');
+--CREATE TYPE period AS ENUM ('1', '2', '3', '4');
 
 
 CREATE TABLE teaching_activity (
@@ -241,43 +241,6 @@ REFERENCES planned_activity(id);
 ---------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------Trigger part----------------------------------------------
-
-
---Check that total allocated hours for an activity is less than the planned hours
-CREATE OR REPLACE FUNCTION validate_allocated_hours()
-RETURNS TRIGGER AS $$
-DECLARE
-    total_allocated INT;
-    total_planned INT;
-BEGIN
-    -- Get total planned hours for this activity
-    SELECT planned_hours INTO total_planned
-    FROM planned_activity
-    WHERE id = NEW.planned_activity_id;
-    
-    --Calculate total allocated hours (including this new allocation)
-    SELECT COALESCE(SUM(allocated_hours), 0) + NEW.allocated_hours
-    INTO total_allocated
-    FROM employee_planned_activity
-    WHERE planned_activity_id = NEW.planned_activity_id
-      AND (employee_id != NEW.employee_id OR TG_OP = 'INSERT');
-    
-    
-    IF total_allocated > total_planned THEN
-        RAISE EXCEPTION 'Total allocated hours (%) exceeds planned hours (%) for planned_activity_id %',
-            total_allocated, total_planned, NEW.planned_activity_id;
-    END IF;
-    
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER validate_allocated_hours
-BEFORE INSERT OR UPDATE ON employee_planned_activity
-FOR EACH ROW
-EXECUTE FUNCTION validate_allocated_hours();
-
-
 
 
 --automatically calcualte and assign exam hours to one teacher
@@ -519,5 +482,41 @@ CREATE TRIGGER validate_num_students
 
 
 
+---------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------VIEW part----------------------------------------------
 
 
+--view for planned cost
+CREATE OR REPLACE VIEW planned_cost AS
+SELECT 
+	ci.id,
+	cl.course_code,
+    ci.instance_id,
+    cl.study_period,
+    ci.study_year,
+	SUM(pa.planned_hours * ta.factor) * (SELECT avg_salary FROM avg_teacher_salary) / 1000 AS planned_cost_ksek
+FROM course_instance AS ci
+JOIN course_layout AS cl ON ci.course_layout_id = cl.id
+JOIN planned_activity AS pa ON pa.course_instance_id = ci.id
+JOIN teaching_activity AS ta ON ta.id = pa.teaching_activity_id
+GROUP BY ci.id, cl.course_code, ci.instance_id, cl.study_period, ci.study_year;
+
+--view for actual allocated cost
+CREATE OR REPLACE VIEW allocated_cost AS
+SELECT 
+	ci.id,
+    cl.course_code,
+    ci.instance_id,
+    cl.study_period,
+    ci.study_year,
+	SUM(emp_pa.allocated_hours * ta.factor * s.salary_amount) / 1000 AS allocated_cost_ksek
+FROM course_instance AS ci	
+JOIN course_layout AS cl ON ci.course_layout_id = cl.id
+JOIN planned_activity AS pa ON pa.course_instance_id = ci.id
+JOIN employee_planned_activity AS emp_pa ON emp_pa.planned_activity_id = pa.id
+JOIN teaching_activity ta ON ta.id = pa.teaching_activity_id
+JOIN employee e ON e.id = emp_pa.employee_id
+JOIN salary s ON s.employee_id = e.id
+WHERE s.is_current = TRUE
+GROUP BY ci.id,cl.course_code,ci.instance_id,cl.study_period,ci.study_year;
