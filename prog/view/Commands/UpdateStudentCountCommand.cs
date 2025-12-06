@@ -16,6 +16,6 @@ public class UpdateStudentCountCommand(int? num_students=null, string? ci_input=
 
     public void PrintHelp()
     {
-        Console.WriteLine("Input is Invalid donkey");
+        Console.WriteLine("Input is Invalid bro");
     }
 }

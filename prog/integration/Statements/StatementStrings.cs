@@ -62,9 +62,7 @@ SELECT
     ci.instance_id ,
     cl.course_code ,
     cl.course_name ,
-    ta.activity_name ,
-    pa.planned_hours ,
-    pa.id 
+    ta.activity_name    
 FROM planned_activity pa
 JOIN course_instance ci ON pa.course_instance_id = ci.id
 JOIN course_layout cl ON ci.course_layout_id = cl.id
@@ -104,7 +102,7 @@ JOIN person ON emp.person_id = person.id
 JOIN teaching_activity AS ta ON ta.id = pa.teaching_activity_id
 LEFT JOIN job_title AS jt ON emp.job_title_id = jt.id
 
-WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND person.first_name =@first_name AND person.last_name = @last_name
+WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND person.first_name = @first_name AND person.last_name = @last_name
 GROUP BY cl.course_code, 
 	ci.instance_id,
 	cl.hp,
@@ -156,5 +154,17 @@ AND planned_activity_id IN (
 ";
 
 	
+	//3q4:
+
+	//add the new teaching activity
+	public const string AddTeachingActivity = @"
+INSERT INTO teaching_activity (activity_name, factor)
+VALUES (@new_activity, @factor);";
+
+
+	//add a new teaching activity to a course instance, which can be later assigned to a teacher
+	public const string AllocateTeachingActivity = @"
+INSERT INTO planned_activity (course_instance_id, planned_hours, teaching_activity_id)
+VALUES ((SELECT id FROM course_instance WHERE instance_id = @course_instance), @hours, (SELECT id FROM teaching_activity WHERE activity_name = @activity));";
 
 }
