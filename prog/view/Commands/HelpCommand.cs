@@ -2,7 +2,7 @@ namespace DbCourse.View.Commands;
 
 public class HelpCommand : ICommand
 {
-    private static readonly List<ICommand> Commands = [new ListCommand(), new HelpCommand()];
+    private static readonly List<ICommand> Commands = [new ListCommand(), new HelpCommand(), new CostCommand(), new UpdateStudentCountCommand()];
     public void Execute(Controller.Controller controller)
     {
         foreach (var command in Commands)

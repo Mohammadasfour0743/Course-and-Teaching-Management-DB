@@ -27,13 +27,13 @@ WHERE pc.study_year = TO_CHAR(CURRENT_DATE, 'YYYY');";
 
     public const string PlannedActualCost = @"
 SELECT 
-	pc.course_code AS ""Course Code"",
-	pc.instance_id AS ""Course Instance"",
-	pc.study_period AS ""Period"",
-	pc.study_year AS ""Study year"",
-	pc.num_students AS ""Number of students"",
-	ROUND(pc.planned_cost_ksek,0) AS ""Planned cost (KSEK)"",
-	ROUND(COALESCE(ac.allocated_cost_ksek,0),0) AS ""Actual Cost (KSEK)""
+	pc.course_code ,
+	pc.instance_id ,
+	pc.study_period ,
+	pc.study_year ,
+	pc.num_students ,
+	ROUND(pc.planned_cost_ksek,0) AS ""planned_cost"",
+	ROUND(COALESCE(ac.allocated_cost_ksek,0),0) AS ""actual_cost""
 FROM planned_cost AS pc
 JOIN allocated_cost AS ac ON pc.id = ac.id
 WHERE pc.instance_id = @course_instance AND pc.study_year = TO_CHAR(CURRENT_DATE, 'YYYY');";
@@ -44,9 +44,15 @@ WHERE pc.instance_id = @course_instance AND pc.study_year = TO_CHAR(CURRENT_DATE
 
 	public const string UpdateStudentCount = @"
 UPDATE course_instance
-SET num_students = @new_num_students,
+SET num_students = @new_num_students
 WHERE instance_id = @course_instance;";
 
+	
+	
+	//3q3:
+	//to test: the course DH2100 has only lectures and seminars assigned to it. Maria Lindgren has 3 course instances assigned to her.
+	//first assign Maria Lindgren some Lecture hours in the course instance (get the instance_id before), then show allocation (use query 3 from task 2)
+	//then allocate Seminar hours and show error.
 	
 	//display only planned teaching activites of a course instance. If a course instance only has
 	//labs and seminars, it will display them. This will be used for teacher allocation. The user will
@@ -109,10 +115,7 @@ GROUP BY cl.course_code,
 ORDER BY emp_name;";
 	
 	
-	//3q3:
-	//to test: the course DH2100 has only lectures and seminars assigned to it. Maria Lindgren has 3 course instances assigned to her.
-	//first assign Maria Lindgren some Lecture hours in the course instance (get the instance_id before), then show allocation (use query 3 from task 2)
-	//then allocate Seminar hours and show error.
+
 	
 	
 	//allocate new teaching activity to a teacher. The activity for this ci must exist before.
@@ -152,5 +155,6 @@ AND planned_activity_id IN (
 );
 ";
 
+	
 
 }
