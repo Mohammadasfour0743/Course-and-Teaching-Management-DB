@@ -11,7 +11,7 @@ public class UpdateStudentCountCommand(int? num_students=null, string? ci_input=
             PrintHelp();
         }
         int ret = controller.UpdateStudentCount(num_students.Value, ci_input);
-        Console.WriteLine(ret);
+        Console.WriteLine(ret + " rows affected");
     }
 
     public void PrintHelp()

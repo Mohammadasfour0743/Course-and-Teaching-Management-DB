@@ -61,6 +61,13 @@ public class CommandHandler(Controller.Controller controller)
                 {
                     command = new InvalidCommand();
                 }
+
+                break;
+            case "get_activity" when split.Length > 1:
+                command = new GetActivityCommand(split[1]);
+                break;
+            case "get_teacher_allocation"  when split.Length > 2:
+                command = new TeacherAllocationCommand(split[1], split[2]);
                 break;
             default:
                 command = new InvalidCommand();

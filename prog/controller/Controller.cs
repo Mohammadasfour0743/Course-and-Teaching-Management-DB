@@ -25,6 +25,16 @@ public class Controller(DbContext dbContext)
         return dbContext.FindPlannedAllocatedCost(ci_input);
     }
 
+    public List<CourseActivityDTO> GetCourseActivity(string ci_input)
+    {
+        return dbContext.FindCourseActivity(ci_input);
+    }
+
+    public List<TeacherAllocationDTO> GetTeacherAllocation(string fn, string ln)
+    {
+        return dbContext.FindTeacherActivity(fn, ln);
+    }
+
     public int UpdateStudentCount( int new_num_students, string ci_input)
     {
         try
@@ -45,6 +55,8 @@ public class Controller(DbContext dbContext)
             throw;
         }
     }
+    
+    
     
     public void Commit() => dbContext.Commit();
     public void Rollback() => dbContext.Rollback();

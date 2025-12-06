@@ -13,13 +13,17 @@ public class DbContext : IDisposable
     private NpgsqlTransaction Transaction => _transaction ??= DbConnection.BeginTransaction();
     
     private PreparedStatement _getPersonStmt;
-    private PreparedStatement _listPeopleStmt;
-    private PreparedStatement _listemployeesStmt;
+    private PreparedStatement _GetPeopleStmt;
+    private PreparedStatement _GetEmployeesStmt;
 
     private PreparedStatement _FindCostAllStmt;
     private PreparedStatement _FindCostStmt;
 
     private PreparedStatement _UpdateStudentCount;
+    
+    private PreparedStatement _FindCourseActivityStmt;
+    
+    private PreparedStatement _FindTeacherAllocationStmt;
     
     
     
@@ -39,8 +43,8 @@ public class DbContext : IDisposable
     {
         _getPersonStmt = PreparedStatement.Create(DbConnection,StatementStrings.Getpersonbylastname)
             .AddParameter("last_name",NpgsqlDbType.Varchar).Prepare();
-        _listPeopleStmt = PreparedStatement.Create(DbConnection, StatementStrings.Listpeople).Prepare();
-        _listemployeesStmt =  PreparedStatement.Create(DbConnection, StatementStrings.Listemployees)
+        _GetPeopleStmt = PreparedStatement.Create(DbConnection, StatementStrings.Listpeople).Prepare();
+        _GetEmployeesStmt =  PreparedStatement.Create(DbConnection, StatementStrings.Listemployees)
             .AddParameter("is_active", NpgsqlDbType.Boolean).Prepare();
         
         _FindCostAllStmt = PreparedStatement.Create(DbConnection, StatementStrings.PlannedActualCostAll).Prepare();
@@ -51,6 +55,13 @@ public class DbContext : IDisposable
         _UpdateStudentCount = PreparedStatement.Create(DbConnection, StatementStrings.UpdateStudentCount)
             .AddParameter("new_num_students",NpgsqlDbType.Integer)
             .AddParameter("course_instance", NpgsqlDbType.Varchar).Prepare();
+        
+        _FindCourseActivityStmt = PreparedStatement.Create(DbConnection, StatementStrings.GetTeachingActivityOfCourse)
+            .AddParameter("course_instance", NpgsqlDbType.Varchar).Prepare();
+        
+        _FindTeacherAllocationStmt = PreparedStatement.Create(DbConnection, StatementStrings.GetAllocationsOfTeacher)
+            .AddParameter("first_name", NpgsqlDbType.Varchar)
+            .AddParameter("last_name", NpgsqlDbType.Varchar).Prepare();
     }
 
 
@@ -126,6 +137,61 @@ public class DbContext : IDisposable
             throw;
         }
     }
+
+    /// <summary>
+    /// gets all teaching activities of a course and displays them
+    /// </summary>
+    /// <param name="ci_input"></param>
+    /// <returns></returns>
+    public List<CourseActivityDTO> FindCourseActivity(string ci_input)
+    {
+        List<CourseActivityDTO> result = new List<CourseActivityDTO>();
+        try
+        {
+            using var reader = _FindCourseActivityStmt.WithParameter("course_instance", ci_input).ExecuteReader(Transaction);
+            while (reader.Read())
+            {
+                var course_instance = reader.GetString(0);
+                var course_code =  reader.GetString(1);
+                var course_name = reader.GetString(2);
+                var activity_name = reader.GetString(3);
+                result.Add(new CourseActivityDTO(course_instance,course_code, course_name, activity_name));
+                
+            }
+            return result;
+        }
+        catch (Exception e)
+        {
+            
+            throw;
+        }
+    }
+
+    public List<TeacherAllocationDTO> FindTeacherActivity(string fn, string ln)
+    {
+        List<TeacherAllocationDTO> result = new List<TeacherAllocationDTO>();
+        try
+        {
+            using var reader = _FindTeacherAllocationStmt.WithParameter("first_name", fn)
+                .WithParameter("last_name", ln).ExecuteReader(Transaction);
+            while (reader.Read())
+            {
+                var emp_name = reader.GetString(0);
+                var  course_code = reader.GetString(1);
+                var course_instance = reader.GetString(2);
+                var period = reader.GetFieldValue<PeriodENUM>(3);
+                var activity_name = reader.GetString(4);
+                var allocated_hours = reader.GetInt32(5);
+                result.Add(new TeacherAllocationDTO(emp_name, course_code, course_instance, period, activity_name, allocated_hours));
+            }
+            return result;
+        }
+        catch (Exception e)
+        {
+            
+            throw;
+        }
+    }
     
     
 /// <summary>
@@ -138,7 +204,7 @@ public class DbContext : IDisposable
         List<Employee> result = new List<Employee>();
         try
         {
-            using var reader = _listemployeesStmt.WithParameter("is_active", is_active).ExecuteReader(Transaction);
+            using var reader = _GetEmployeesStmt.WithParameter("is_active", is_active).ExecuteReader(Transaction);
             while (reader.Read())
             {
                 result.Add(new Employee
@@ -173,7 +239,7 @@ public class DbContext : IDisposable
     public List<Person> GetPeople()
     {
         List<Person> result = [];
-        using var reader = _listPeopleStmt.ExecuteReader(Transaction);
+        using var reader = _GetPeopleStmt.ExecuteReader(Transaction);
         while (reader.Read())
         {
             result.Add(new Person
@@ -209,8 +275,8 @@ public class DbContext : IDisposable
     public void Dispose()
     {
         _getPersonStmt.Dispose();
-        _listPeopleStmt.Dispose();
-        _listemployeesStmt.Dispose();
+        _GetPeopleStmt.Dispose();
+        _GetEmployeesStmt.Dispose();
         _transaction?.Dispose();
         DbConnection.Dispose();
     }

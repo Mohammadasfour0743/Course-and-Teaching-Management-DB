@@ -72,26 +72,15 @@ ORDER BY ta.activity_name;";
 	
 	
 	
-	//List all course_instances a teacher is associated with (query 3 from task 2)
+	//List all course_instances a teacher is associated with (edited query 3 from task 2)
 	public const string GetAllocationsOfTeacher = @"
-
 SELECT 
+	(person.first_name || ' ' || person.last_name) AS emp_name,
 	cl.course_code, 
 	ci.instance_id,
-	cl.hp,
 	cl.study_period,
-	(person.first_name || ' ' || person.last_name) AS emp_name,
-	jt.job_title,
-    COALESCE(SUM(CASE WHEN ta.activity_name = 'Lecture'  THEN emp_pa.allocated_hours * ta.factor END),0) AS lecture_hours,
-    COALESCE(SUM(CASE WHEN ta.activity_name = 'Tutorial' THEN emp_pa.allocated_hours * ta.factor END),0) AS tutorial_hours,
-    COALESCE(SUM(CASE WHEN ta.activity_name = 'Lab'      THEN emp_pa.allocated_hours * ta.factor END),0) AS lab_hours,
-    COALESCE(SUM(CASE WHEN ta.activity_name = 'Seminar'  THEN emp_pa.allocated_hours * ta.factor END), 0) AS seminar_hours,
-    COALESCE(SUM(CASE WHEN ta.activity_name = 'Examination' THEN emp_pa.allocated_hours * ta.factor END), 0) AS exam_hours,
-    COALESCE(SUM(CASE WHEN ta.activity_name = 'Administration' THEN emp_pa.allocated_hours * ta.factor END), 0) AS admin_hours,
-    COALESCE(SUM(CASE WHEN ta.activity_name NOT IN ('Lecture','Tutorial','Lab','Seminar','Examination','Administration') 
-             THEN emp_pa.allocated_hours * ta.factor END),0) AS other_overhead_hours,
-
-	COALESCE(SUM(emp_pa.allocated_hours * ta.factor), 0) AS total_hours
+	ta.activity_name,
+	COALESCE(SUM(emp_pa.allocated_hours * ta.factor), 0) AS allocated_hours
 
 FROM employee_planned_activity AS emp_pa
 JOIN planned_activity AS pa ON pa.id = emp_pa.planned_activity_id
@@ -109,8 +98,10 @@ GROUP BY cl.course_code,
 	person.first_name,
 	person.last_name,
 	jt.job_title,
-	cl.study_period
-ORDER BY emp_name;";
+	cl.study_period,
+	ta.activity_name
+ORDER BY course_code;
+";
 	
 	
 
