@@ -10,7 +10,7 @@ public class CostCommand(string? courseInstance = null) : ICommand
         {
             List<CostDTO> result = controller.GetAllCosts();
             if(result.Count == 0)
-                Console.WriteLine("No results");
+                Console.WriteLine("No results. Check input");
             else
             {
                 foreach (CostDTO cost in result)

@@ -24,7 +24,7 @@ public class ActivityCommand(string? option = null, ActivityCommandDto? args = n
             case "list" when args.CiInput is not null:
                 List<CourseActivityDTO> ret = controller.GetCourseActivity(args.CiInput);
                 if(ret.Count == 0)
-                    Console.WriteLine("No results");
+                    Console.WriteLine("course instance is wrong. No results");
                 else
                 {
                     foreach (CourseActivityDTO ca in ret)

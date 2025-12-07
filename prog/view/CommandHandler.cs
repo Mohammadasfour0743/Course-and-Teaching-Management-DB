@@ -70,9 +70,9 @@ public class CommandHandler(Controller.Controller controller)
                 command = new CostCommand(costArgs);
                 break;
             case "update_student_number" when split.Length > 2:
-                if (int.TryParse(split[1], out int newNumStudents))
+                if (int.TryParse(split[2], out int newNumStudents))
                 {
-                    command = new UpdateStudentCountCommand(newNumStudents, split[2]);
+                    command = new UpdateStudentCountCommand(split[1], newNumStudents);
                 }
                 else
                 {

@@ -1,5 +1,6 @@
 using DbCourse.Integration;
 using DbCourse.Model;
+using Npgsql;
 
 namespace DbCourse.Controller;
 
@@ -22,11 +23,25 @@ public class Controller(DbContext dbContext)
 
     public CostDTO GetCost(string ciInput)
     {
-        return dbContext.FindPlannedAllocatedCost(ciInput);
+        try
+        {
+            return dbContext.FindPlannedAllocatedCost(ciInput);
+        }
+        catch (InvalidOperationException e)
+        {
+            throw new InvalidOperationException($"Unable to find course instance. Input: {ciInput}", e);
+
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+        
     }
 
     public List<CourseActivityDTO> GetCourseActivity(string ciInput)
     {
+        
         return dbContext.FindCourseActivity(ciInput);
     }
 
@@ -106,6 +121,17 @@ public class Controller(DbContext dbContext)
             }
             Commit();
             return affected;
+        }
+        catch (NpgsqlException e)
+        {
+            Rollback();
+            if (e.SqlState == "23505")
+            {
+                throw new InvalidOperationException("Teaching activity already exists");
+            }
+
+            throw;
+
         }
         catch (Exception e)
         {

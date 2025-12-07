@@ -250,9 +250,9 @@ public class DbContext : IDisposable
                 .WithParameter("factor", factor)
                 .ExecuteNonQuery(Transaction);
         }
+        
         catch (Exception e)
         {
-        
             throw;
         }
     }

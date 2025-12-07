@@ -17,7 +17,7 @@ public class TeacherAllocationCommand(string? option = null, TeacherCommandDTO? 
             case "list":
                 List<TeacherAllocationDTO> ret = controller.GetTeacherAllocation(args.FirstName, args.LastName);
                 if(ret.Count == 0)
-                    Console.WriteLine("No results");
+                    Console.WriteLine("No results. Check employee name");
                 else
                 {
                     foreach (TeacherAllocationDTO ta in ret)
@@ -29,13 +29,13 @@ public class TeacherAllocationCommand(string? option = null, TeacherCommandDTO? 
             case "allocate" when !string.IsNullOrEmpty(args.ActivityName) && !string.IsNullOrEmpty(args.CiInput) && args.Hours > 0:
                 var  allocRes = controller.AllocateTeacherActivity(args.FirstName, args.LastName, args.CiInput,
                     args.ActivityName, args.Hours.Value);
-                Console.WriteLine($"{allocRes} rows affected");
+                Console.WriteLine($"Allocation Successful. {allocRes} rows affected");
                 break;
             case "deallocate" when !string.IsNullOrEmpty(args.ActivityName) && !string.IsNullOrEmpty(args.CiInput):
                 var deallocRes =
                     controller.DeallocateTeacherActivity(args.FirstName, args.LastName, args.CiInput,
                         args.ActivityName);
-                Console.WriteLine($"{deallocRes} rows affected");
+                Console.WriteLine($"Deallocation Successful. {deallocRes} rows affected");
                 break;
             default:
                 PrintHelp();

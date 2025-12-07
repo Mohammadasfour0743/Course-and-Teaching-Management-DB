@@ -31,3 +31,22 @@ to create new model:
 DTO:
 created as records, cannot be changed
 between the (), write the attributes that can be fetched from view
+
+
+
+stuff:
+Make help command better
+
+get_cost is not in help
+
+update_student_number also not in help. also the input should be switched (first instance then number)
+
+putting a wrong instance in update_student_number error should be fixed
+
+When an update is succesful we should return "allocation cmplete" or smthn
+
+add a list for all course instances
+
+in activity create , if you give an existing teaching activity it will give sql error
+
+
