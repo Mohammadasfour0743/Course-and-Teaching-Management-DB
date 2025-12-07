@@ -102,9 +102,13 @@ GROUP BY cl.course_code,
 	ta.activity_name
 ORDER BY course_code;
 ";
-	
-	
 
+
+	public const string ReadInstanceId = @"
+SELECT ci.instance_id 
+FROM course_instance AS ci
+WHERE instance_id = @instance_id
+FOR NO KEY UPDATE;";
 	
 	
 	//allocate new teaching activity to a teacher. The activity for this ci must exist before.
@@ -156,6 +160,6 @@ VALUES (@new_activity, @factor);";
 	//add a new teaching activity to a course instance, which can be later assigned to a teacher
 	public const string AllocateTeachingActivity = @"
 INSERT INTO planned_activity (course_instance_id, planned_hours, teaching_activity_id)
-VALUES ((SELECT id FROM course_instance WHERE instance_id = @course_instance), @hours, (SELECT id FROM teaching_activity WHERE activity_name = @activity));";
+VALUES ((SELECT id FROM course_instance WHERE instance_id = @course_instance), @hours, (SELECT id FROM teaching_activity WHERE activity_name = @activity_name));";
 
 }

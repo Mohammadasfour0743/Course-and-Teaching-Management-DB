@@ -24,6 +24,16 @@ public class DbContext : IDisposable
     private PreparedStatement _FindCourseActivityStmt;
     
     private PreparedStatement _FindTeacherAllocationStmt;
+
+    private PreparedStatement _ReadInstanceId;
+    
+    private PreparedStatement _CreateTeacherAllocationStmt;
+    
+    private PreparedStatement _DeleteTeacherAllocationStmt;
+    
+    private PreparedStatement _CreateTeachingActivityStmt;
+
+    private PreparedStatement _CreateCourseAllocationStmt;
     
     
     
@@ -62,6 +72,27 @@ public class DbContext : IDisposable
         _FindTeacherAllocationStmt = PreparedStatement.Create(DbConnection, StatementStrings.GetAllocationsOfTeacher)
             .AddParameter("first_name", NpgsqlDbType.Varchar)
             .AddParameter("last_name", NpgsqlDbType.Varchar).Prepare();
+        
+        _ReadInstanceId =  PreparedStatement.Create(DbConnection, StatementStrings.ReadInstanceId)
+            .AddParameter("course_instance", NpgsqlDbType.Varchar).Prepare();
+        
+        _CreateTeacherAllocationStmt = PreparedStatement.Create(DbConnection, StatementStrings.AllocateTeachingActivity)
+            .AddParameter("first_name",  NpgsqlDbType.Varchar).AddParameter("last_name", NpgsqlDbType.Varchar)
+            .AddParameter("course_instance", NpgsqlDbType.Varchar).AddParameter("teaching_activity", NpgsqlDbType.Varchar)
+            .AddParameter("amount_hours", NpgsqlDbType.Integer).Prepare();
+
+        _DeleteTeacherAllocationStmt = PreparedStatement.Create(DbConnection, StatementStrings.DeallocateTeachingLoad)
+            .AddParameter("first_name", NpgsqlDbType.Varchar).AddParameter("last_name", NpgsqlDbType.Varchar)
+            .AddParameter("course_instance", NpgsqlDbType.Varchar)
+            .AddParameter("teaching_activity", NpgsqlDbType.Varchar).Prepare();
+        
+        _CreateTeachingActivityStmt = PreparedStatement.Create(DbConnection, StatementStrings.AddTeachingActivity)
+            .AddParameter("new_activity", NpgsqlDbType.Varchar)
+            .AddParameter("factor", NpgsqlDbType.Numeric).Prepare();
+        
+        _CreateCourseAllocationStmt = PreparedStatement.Create(DbConnection, StatementStrings.AllocateTeachingActivity)
+            .AddParameter("course_instance", NpgsqlDbType.Varchar)
+            .AddParameter("hours",  NpgsqlDbType.Integer).AddParameter("activity_name", NpgsqlDbType.Varchar).Prepare();
     }
 
 
@@ -138,6 +169,82 @@ public class DbContext : IDisposable
         }
     }
 
+    public int CreateTeacherAllocation(string fn, string ln, string ci_input, string activity_name, int hours)
+    {
+        try
+        {
+            return _CreateTeacherAllocationStmt.WithParameter("first_name", fn).WithParameter("last_name", ln)
+                .WithParameter("course_instance", ci_input).WithParameter("teaching_activity", activity_name)
+                .WithParameter("amount_hours", hours).ExecuteNonQuery(Transaction);
+        }
+        catch (Exception e)
+        {
+            
+            throw;
+        }
+    }
+
+    public int DeleteTeacherAllocation(string fn, string ln, string ci_input, string activity_name)
+    {
+        try
+        {
+            return _DeleteTeacherAllocationStmt.WithParameter("first_name", fn).WithParameter("last_name", ln)
+                .WithParameter("course_instance", ci_input).WithParameter("teaching_activity", activity_name)
+                .ExecuteNonQuery(Transaction);
+        }
+        catch (Exception e)
+        {
+            
+            throw;
+        }
+    }
+
+    public int CreateTeachingActivity(string new_activity, double factor)
+    {
+        try
+        {
+            return _CreateTeachingActivityStmt.WithParameter("new_activity", new_activity).WithParameter("factor", factor).ExecuteNonQuery(Transaction);
+        }
+        catch (Exception e)
+        {
+        
+            throw;
+        }
+    }
+
+    public int CreateCourseAllocation(string ci_input, int planned_hours, string activity_name)
+    {
+        try
+        {
+            return _CreateCourseAllocationStmt.WithParameter("course_instance", ci_input)
+                .WithParameter("hours", planned_hours)
+                .WithParameter("activity_name", activity_name)
+                .ExecuteNonQuery(Transaction);
+        }
+        catch (Exception e)
+        {
+          
+            throw;
+        }
+    }
+    
+    
+
+    public string ReadInstanceIdLock(string ci_input)
+    {
+        string result;
+        try
+        {
+            using var reader = _ReadInstanceId.WithParameter("course_instance", ci_input).ExecuteReader(Transaction);
+            result = reader.GetString(0);
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+    }
+
     /// <summary>
     /// gets all teaching activities of a course and displays them
     /// </summary>
@@ -192,6 +299,10 @@ public class DbContext : IDisposable
             throw;
         }
     }
+    
+    
+    
+    
     
     
 /// <summary>
