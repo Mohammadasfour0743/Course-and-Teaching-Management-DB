@@ -7,8 +7,8 @@ public class HelpCommand : ICommand
         new HelpCommand(),
         new CostCommand(),
         new UpdateStudentCountCommand(),
-        new GetActivityCommand(),
-        new TeacherAllocationCommand()
+        new TeacherAllocationCommand(),
+        new ActivityCommand()
     ];
     public void Execute(Controller.Controller controller)
     {

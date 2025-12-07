@@ -30,9 +30,9 @@ public class Controller(DbContext dbContext)
         return dbContext.FindCourseActivity(ciInput);
     }
 
-    public List<TeacherAllocationDTO> GetTeacherAllocation(string fn, string ln)
+    public List<TeacherAllocationDTO> GetTeacherAllocation(string firstName, string lastName)
     {
-        return dbContext.FindTeacherActivity(fn, ln);
+        return dbContext.FindTeacherActivity(firstName, lastName);
     }
 
     public int UpdateStudentCount( int newNumStudents, string ciInput)
@@ -56,7 +56,7 @@ public class Controller(DbContext dbContext)
     }
     
    
-//not implemented in view
+
     public int AllocateTeacherActivity(string firstName, string lastName, string ciInput, string activityName, int hours)
     {
         try
@@ -76,7 +76,7 @@ public class Controller(DbContext dbContext)
         }
         
     }
-//not implemented in view
+
     public int DeallocateTeacherActivity(string firstName, string lastName, string ciInput, string activityName)
     {
         try
@@ -95,7 +95,6 @@ public class Controller(DbContext dbContext)
             throw;
         }
     }
-//not implemented in view
     public int CreateActivity(string activityName, double factor)
     {
         try
@@ -114,7 +113,6 @@ public class Controller(DbContext dbContext)
             throw;
         }
     }
-//not implemented in view
     public int AssignActivityToCourse(string ciInput, int plannedHours, string activityName)
     {
         try

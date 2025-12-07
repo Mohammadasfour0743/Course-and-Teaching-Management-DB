@@ -1,6 +1,6 @@
 namespace DbCourse.View.Commands;
 
-public class InvalidCommand : ICommand
+public class InvalidCommand() : ICommand
 {
     public void Execute(Controller.Controller controller)
     {

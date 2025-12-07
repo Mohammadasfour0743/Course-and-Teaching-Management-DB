@@ -98,7 +98,7 @@ public class DbContext : IDisposable
         
         _readInstanceId =  PreparedStatement
             .Create(DbConnection, StatementStrings.ReadInstanceId)
-            .AddParameter("course_instance", NpgsqlDbType.Varchar)
+            .AddParameter("instance_id", NpgsqlDbType.Varchar)
             .Prepare();
         
         _createTeacherAllocationStmt = PreparedStatement

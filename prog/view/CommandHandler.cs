@@ -1,4 +1,5 @@
 
+using DbCourse.Model;
 using DbCourse.View.Commands;
 
 namespace DbCourse.View;
@@ -35,7 +36,21 @@ public class CommandHandler(Controller.Controller controller)
     }
 
     private void StopHandler() => _isRunning = false;
+    
+    private string? GetIfExists(int index, string[] arr) =>  arr.Length > index ? arr[index] : null;
 
+    private int? ParseIntOrNull(string? input)
+    {
+        if (int.TryParse(input, out var res))
+            return res;
+        return null;
+    }
+    private double? ParseDoubleOrNull(string? input)
+    {
+        if (double.TryParse(input, out var res))
+            return res;
+        return null;
+    }
     private ICommand ParseCommand(string cmdString)
     {
         ICommand command;
@@ -64,12 +79,28 @@ public class CommandHandler(Controller.Controller controller)
                     command = new InvalidCommand();
                 }
                 break;
-            case "get_activity" when split.Length > 1:
-                command = new GetActivityCommand(split[1]);
+            
+            case "teacher_allocation"  when split.Length > 3:
+                var teacherCommandInput = new TeacherCommandDTO(
+                    split[2],
+                    split[3],
+                    GetIfExists(4, split),
+                    GetIfExists(5, split),
+                    ParseIntOrNull(GetIfExists(6, split)));
+                command = new TeacherAllocationCommand(split[1].ToLowerInvariant(),teacherCommandInput);
                 break;
-            case "get_teacher_allocation"  when split.Length > 2:
-                command = new TeacherAllocationCommand(split[1], split[2]);
+            case "activity" when split.Length > 2:
+                bool isCreate = split[1].Equals("create", StringComparison.InvariantCultureIgnoreCase);
+                var activityCommandInput = new ActivityCommandDto(
+                    isCreate ? split[2] : GetIfExists(3,split),
+                    isCreate ? null : GetIfExists(2, split),
+                    ParseIntOrNull(GetIfExists(4, split)),
+                    isCreate ? ParseDoubleOrNull(GetIfExists(3, split)) : null
+                );
+
+                command = new ActivityCommand(split[1].ToLowerInvariant(), activityCommandInput);
                 break;
+            
             default:
                 command = new InvalidCommand();
                 break;

@@ -9,13 +9,20 @@ public class CostCommand(string? courseInstance = null) : ICommand
         if (string.IsNullOrEmpty(courseInstance))
         {
             List<CostDTO> result = controller.GetAllCosts();
-            foreach (CostDTO cost in result)
+            if(result.Count == 0)
+                Console.WriteLine("No results");
+            else
             {
-                Console.WriteLine(cost);
+                foreach (CostDTO cost in result)
+                {
+                    Console.WriteLine(cost);
+                }
             }
+            
         }
         else
         {
+            //todo no res
             CostDTO result = controller.GetCost(courseInstance);
             Console.WriteLine(result);
         }
@@ -24,6 +31,6 @@ public class CostCommand(string? courseInstance = null) : ICommand
 
     public void PrintHelp()
     {
-        throw new NotImplementedException();
+       // throw new NotImplementedException();
     }
 }
