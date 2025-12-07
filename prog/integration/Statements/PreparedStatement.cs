@@ -5,7 +5,7 @@ namespace DbCourse.Integration.Statements;
 
 public class PreparedStatement(NpgsqlCommand command) :IDisposable
 {
-    public NpgsqlCommand Command { get; private set; } = command;
+    private NpgsqlCommand Command { get; set; } = command;
     
     public static PreparedStatement Create(NpgsqlConnection connection, string statementString)
     {
@@ -37,7 +37,6 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         }
         return this;
     }
-    //dont think we need to clear but gotta check docs
     public T? ExecuteScalar<T>(NpgsqlTransaction? transaction = null)
     {
         Command.Transaction = transaction;
@@ -49,11 +48,9 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         }
         finally
         {
-           // Command.Parameters.Clear();
             Command.Transaction = null;
         }
     }
-    //todo:might be too convoluted
     public NpgsqlDataReader ExecuteReader(NpgsqlTransaction? transaction = null)
     {
         Command.Transaction = transaction;
@@ -63,7 +60,6 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         }
         finally
         {
-            //Command.Parameters.Clear();
             Command.Transaction = null;
         }
     }
@@ -73,13 +69,11 @@ public class PreparedStatement(NpgsqlCommand command) :IDisposable
         Command.Transaction = transaction;
         try
         {
-           
             var result = Command.ExecuteNonQuery();
             return result;
         }
         finally
         {
-            //Command.Parameters.Clear();
             Command.Transaction = null;
         }
     }

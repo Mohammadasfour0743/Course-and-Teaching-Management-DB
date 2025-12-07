@@ -2,11 +2,11 @@
 
 namespace DbCourse.View.Commands;
 
-public class CostCommand(string? course_instance = null) : ICommand
+public class CostCommand(string? courseInstance = null) : ICommand
 {
     public void Execute(Controller.Controller controller)
     {
-        if (course_instance is null)
+        if (string.IsNullOrEmpty(courseInstance))
         {
             List<CostDTO> result = controller.GetAllCosts();
             foreach (CostDTO cost in result)
@@ -16,7 +16,7 @@ public class CostCommand(string? course_instance = null) : ICommand
         }
         else
         {
-            CostDTO result = controller.GetCost(course_instance);
+            CostDTO result = controller.GetCost(courseInstance);
             Console.WriteLine(result);
         }
         

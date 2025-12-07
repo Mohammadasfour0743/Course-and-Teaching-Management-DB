@@ -2,15 +2,16 @@
 
 namespace DbCourse.View.Commands;
 
-public class GetActivityCommand(string course_instance) : ICommand
+public class GetActivityCommand(string? courseInstance = null) : ICommand
 {
     public void Execute(Controller.Controller controller)
     {
-        if (course_instance == "" || course_instance == null)
+        if (string.IsNullOrEmpty(courseInstance))
         {
             PrintHelp();
+            return;
         }
-        List<CourseActivityDTO> ret = controller.GetCourseActivity(course_instance);
+        List<CourseActivityDTO> ret = controller.GetCourseActivity(courseInstance);
         foreach (CourseActivityDTO ca in ret)
         {
             Console.WriteLine(ca);

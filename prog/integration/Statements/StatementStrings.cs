@@ -2,10 +2,10 @@ namespace DbCourse.Integration.Statements;
 
 public static class StatementStrings
 {
-    public const string Getpersonbylastname = "SELECT id FROM person WHERE last_name = @last_name";
-    public const string Listpeople = "SELECT * FROM person";
+    public const string GetPersonByLastname = "SELECT id FROM person WHERE last_name = @last_name";
+    public const string ListPeople = "SELECT * FROM person";
 
-    public const string Listemployees = "SELECT * FROM employee WHERE is_active = @is_active";
+    public const string ListEmployees = "SELECT * FROM employee WHERE is_active = @is_active";
 
     //3q1:
     //planned and allocated hours for all courses instances if not input is given (input is instance)
@@ -144,7 +144,7 @@ AND planned_activity_id IN (
 	FROM planned_activity AS pa
 	JOIN course_instance AS ci ON pa.course_instance_id = ci.id
 	JOIN teaching_activity AS ta ON ta.id = pa.teaching_activity_id
-	WHERE ci.instance_id = @course_instance AND ta.activity_name = @teaching_activity;
+	WHERE ci.instance_id = @course_instance AND ta.activity_name = @teaching_activity
 );
 ";
 

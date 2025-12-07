@@ -2,15 +2,18 @@
 
 namespace DbCourse.View.Commands;
 
-public class TeacherAllocationCommand(string first_n, string last_n) : ICommand
+public class TeacherAllocationCommand(string? firstName = null, string? lastName = null) : ICommand
 {
     public void Execute(Controller.Controller controller)
     {
-        if (first_n.Length <= 0 || last_n.Length <= 0)
+        if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
         {
             PrintHelp();
+            return;
         }
-        List<TeacherAllocationDTO> ret = controller.GetTeacherAllocation(first_n, last_n);
+        
+        List<TeacherAllocationDTO> ret = controller.GetTeacherAllocation(firstName, lastName);
+        
         foreach (TeacherAllocationDTO ta in ret)
         {
             Console.WriteLine(ta);

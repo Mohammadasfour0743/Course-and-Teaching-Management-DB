@@ -1,7 +1,7 @@
 ﻿namespace DbCourse.Model;
 
 public record CourseActivityDTO(
-    string instance_id,
-    string course_code,
-    string course_name,
-    string activity_name);
+    string InstanceId,
+    string CourseCode,
+    string CourseName,
+    string ActivityName);

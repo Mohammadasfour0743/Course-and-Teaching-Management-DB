@@ -2,20 +2,24 @@
 
 namespace DbCourse.View.Commands;
 
-public class UpdateStudentCountCommand(int? num_students=null, string? ci_input=null) : ICommand
+public class UpdateStudentCountCommand(int? numStudents=null, string? ciInput = null) : ICommand
 {
     public void Execute(Controller.Controller controller)
     {
-        if (num_students == null || ci_input == null)
+        if (numStudents is null || string.IsNullOrEmpty(ciInput))
         {
             PrintHelp();
+            return;
         }
-        int ret = controller.UpdateStudentCount(num_students.Value, ci_input);
+        
+        int ret = controller.UpdateStudentCount(numStudents.Value, ciInput);
+        
         Console.WriteLine(ret + " rows affected");
     }
 
     public void PrintHelp()
     {
         Console.WriteLine("Input is Invalid bro");
+        return;
     }
 }

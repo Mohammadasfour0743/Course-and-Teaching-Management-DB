@@ -29,21 +29,23 @@ public class CommandHandler(Controller.Controller controller)
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
             }
         }
     }
-    public void StopHandler() => _isRunning = false;
+
+    private void StopHandler() => _isRunning = false;
 
     private ICommand ParseCommand(string cmdString)
     {
         ICommand command;
-        var split = cmdString.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
-            .ToArray();
+        
+        var split = cmdString.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        
         switch (split[0].ToLowerInvariant())
         {
             case "list" when split.Length > 1:
-                command = new ListCommand(split[1]);
+                command = new ListCommand(split[1].ToLowerInvariant());
                 break;
             case "help":
                 command = new HelpCommand();
@@ -53,15 +55,14 @@ public class CommandHandler(Controller.Controller controller)
                 command = new CostCommand(costArgs);
                 break;
             case "update_student_number" when split.Length > 2:
-                if (int.TryParse(split[1], out int new_num_students))
+                if (int.TryParse(split[1], out int newNumStudents))
                 {
-                    command = new UpdateStudentCountCommand(new_num_students, split[2]);
+                    command = new UpdateStudentCountCommand(newNumStudents, split[2]);
                 }
                 else
                 {
                     command = new InvalidCommand();
                 }
-
                 break;
             case "get_activity" when split.Length > 1:
                 command = new GetActivityCommand(split[1]);
