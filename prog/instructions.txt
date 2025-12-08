@@ -54,13 +54,13 @@ error if name is incorrect
 error if course instance does not exist
 error if activity is not planned in course
 error if activity name is typed incorrect
-error if hours <0
+error if hours <0 handled
 
 --deallocate (first, last, course instance, activity name)
 error if name is incorrect
 error if course instance does not exist
 error if activity is not planned in course
-error if deleting an allocation that does not exist
+error if deleting an allocation that does not exist handled
 
 
 -activity: input:
@@ -68,7 +68,7 @@ error if deleting an allocation that does not exist
 sql error (see below). handled
 
 --assign (course_instance, activity name, planned hours)
-planned hours can be negative
+planned hours can be negative handled
 sql errors (see below)
 
 --list (course instance)
@@ -77,16 +77,16 @@ error if input is wrong. Handled
 SQL ERRORS:
 
 -update_student_number: P0001 (also trigger)
-making number of students > max allowed
+making number of students > max allowed handled
 
 
 -teacher_allocation allocate: P0001 (thrown by trigger)
 allocating more than 4 instances to one teacher 
-to test: teacher_allocation allocate Maria Lindgren 2025-DH2100-f5c9 Lecture 4 (replace course instance with your own, but it should be for DH2100)
+to test: teacher_allocation allocate Maria Lindgren 2025-DH2100-f5c9 Lecture 4 (replace course instance with your own, but it should be for DH2100) handled
 
 -teacher_allocation allocate: 23505 (unique)
 allocating something that already exists (if Helena has Lecture in course X, you cannot allocate Lecture in X)
-(i think if they want to allocate more, they can delete the existing one and allocate a new one. easier to handle)
+(i think if they want to allocate more, they can delete the existing one and allocate a new one. easier to handle) handled
 
 
 -activity create: 23305 (unique)
@@ -98,3 +98,4 @@ assigning an activity that already exists (if course X has lecture hours, you ca
 -activity assign: 23502 (not null)
 if one of the inputs is wrong, the SELECT in the query cannot find the corresponding stuff, and will throw this error.
 (provide a wrong course instance or activity name
+handled

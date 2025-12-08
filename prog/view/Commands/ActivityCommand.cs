@@ -17,8 +17,8 @@ public class ActivityCommand(string? option = null, ActivityCommandDto? args = n
                 var createRes = controller.CreateActivity(args.ActivityName, factor);
                 Console.WriteLine($"{createRes} rows affected");
                 break;
-            case "assign" when !string.IsNullOrEmpty(args.ActivityName) && args.CiInput is not null && args.PlannedHours is {} hours:
-                var assignRes = controller.AssignActivityToCourse(args.CiInput, hours, args.ActivityName);
+            case "assign" when !string.IsNullOrEmpty(args.ActivityName) && args.CiInput is not null && args.PlannedHours is > 0:
+                var assignRes = controller.AssignActivityToCourse(args.CiInput, args.PlannedHours.Value, args.ActivityName);
                 Console.WriteLine($"{assignRes} rows affected");
                 break;
             case "list" when args.CiInput is not null:

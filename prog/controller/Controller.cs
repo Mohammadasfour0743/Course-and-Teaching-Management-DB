@@ -59,9 +59,17 @@ public class Controller(DbContext dbContext)
             {
                 throw new ArgumentOutOfRangeException(nameof(ciInput), ciInput, "Course instance does not exist :(");
             }
+
             Commit();
-            
+
             return affected;
+        }
+        catch (NpgsqlException e)
+        {
+            Rollback();
+            if (e.SqlState == "P0001")
+                throw new InvalidOperationException(e.Message[e.Message.IndexOf(' ')..]);
+            throw;
         }
         catch (Exception e)
         {   
@@ -79,10 +87,26 @@ public class Controller(DbContext dbContext)
             int affected = dbContext.CreateTeacherAllocation(firstName, lastName, ciInput, activityName, hours);
             if (affected <= 0)
             {
-                throw new InvalidOperationException("Unable to create a new TeacherAllocation. Input is wrong");
+                throw new InvalidOperationException("Unable to create a new TeacherAllocation. Name or course instance id is wrong");
             }
+
             Commit();
             return affected;
+        }
+        catch (NpgsqlException e)
+        {
+            Rollback();
+            switch (e.SqlState)
+            {
+                case "23505":
+                    throw new InvalidOperationException($"Duplicate allocation for {activityName}");
+                    break;
+                case "P0001":
+                    throw new InvalidOperationException(e.Message[e.Message.IndexOf(' ')..]);
+                    break;
+            }
+
+            throw;
         }
         catch (Exception e)
         {
@@ -148,8 +172,25 @@ public class Controller(DbContext dbContext)
             {
                 throw new InvalidOperationException("Unable to create a new CourseAllocation. Input is wrong");
             }
+
             Commit();
             return affected;
+        }
+        catch (NpgsqlException e)
+        {
+            Rollback();
+            switch (e.SqlState)
+            {
+                case "23502":
+                    throw new InvalidOperationException(
+                        $"Course instance {ciInput} or activity {activityName} not found. ");
+                break;
+                case "23505":
+                    throw new InvalidOperationException("Activity already assigned to course");
+                    break;
+                default:
+                    throw;
+            }
         }
         catch (Exception e)
         {
