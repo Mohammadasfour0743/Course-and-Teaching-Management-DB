@@ -32,21 +32,69 @@ DTO:
 created as records, cannot be changed
 between the (), write the attributes that can be fetched from view
 
+Note for report: added ALTER TABLE planned_activity
+                       ADD CONSTRAINT unique_activity_per_course
+                       UNIQUE (course_instance_id, teaching_activity_id);
 
 
-stuff:
-Make help command better
+stuff to consider:
+-get_cost: inputs: course_instance.
+can throw an error if wrong instance is given.  Handled
 
-get_cost is not in help
+-update_student_number: inputs: course_instance, student number.
+can throw an error if wrong course instance is given. Handled
+sql error (see below)
 
-update_student_number also not in help. also the input should be switched (first instance then number)
+-teacher_allocation: input: 
+--list (first name, last name)
+error if name is incorrect. Handled
 
-putting a wrong instance in update_student_number error should be fixed
+--allocate (first, last, course instance, activity name, hours)
+error if name is incorrect
+error if course instance does not exist
+error if activity is not planned in course
+error if activity name is typed incorrect
+error if hours <0
 
-When an update is succesful we should return "allocation cmplete" or smthn
+--deallocate (first, last, course instance, activity name)
+error if name is incorrect
+error if course instance does not exist
+error if activity is not planned in course
+error if deleting an allocation that does not exist
 
-add a list for all course instances
 
-in activity create , if you give an existing teaching activity it will give sql error
+-activity: input:
+--create (activity name, factor)
+sql error (see below). handled
+
+--assign (course_instance, activity name, planned hours)
+planned hours can be negative
+sql errors (see below)
+
+--list (course instance)
+error if input is wrong. Handled
+
+SQL ERRORS:
+
+-update_student_number: P0001 (also trigger)
+making number of students > max allowed
 
 
+-teacher_allocation allocate: P0001 (thrown by trigger)
+allocating more than 4 instances to one teacher 
+to test: teacher_allocation allocate Maria Lindgren 2025-DH2100-f5c9 Lecture 4 (replace course instance with your own, but it should be for DH2100)
+
+-teacher_allocation allocate: 23505 (unique)
+allocating something that already exists (if Helena has Lecture in course X, you cannot allocate Lecture in X)
+(i think if they want to allocate more, they can delete the existing one and allocate a new one. easier to handle)
+
+
+-activity create: 23305 (unique)
+creating an existing activity. handled
+
+-activity assign: 23505 (unique)
+assigning an activity that already exists (if course X has lecture hours, you cannot assign lecture hours to it again)
+
+-activity assign: 23502 (not null)
+if one of the inputs is wrong, the SELECT in the query cannot find the corresponding stuff, and will throw this error.
+(provide a wrong course instance or activity name
