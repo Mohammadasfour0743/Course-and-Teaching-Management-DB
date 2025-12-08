@@ -38,6 +38,36 @@ public class Controller(DbContext dbContext)
         }
         
     }
+    
+    public List<CourseInstanceDTO> GetActiveCourseInstances()
+    {
+        try
+        {
+            List<CourseInstanceDTO> instances = new List<CourseInstanceDTO>();
+            List<CostDTO> allCost = dbContext.FindAllPlannedAllocatedCost();
+            if (allCost is null)
+            {
+                throw new InvalidOperationException("There are no course instances.");
+            }
+            foreach (CostDTO cost in allCost)
+            {
+                string courseCode = cost.CourseCode;
+                string courseInstance = cost.CourseInstance;
+                PeriodENUM period = cost.Period;
+                string studyYear = cost.StudyYear;
+                int numStudents = cost.NumStudents;
+                instances.Add(new CourseInstanceDTO(courseCode, courseInstance, period, studyYear, numStudents));
+            }
+            return instances;
+        }
+        catch (Exception e)
+        {
+            
+            throw;
+        }
+       
+    }
+
 
     public List<CourseActivityDTO> GetCourseActivity(string ciInput)
     {
@@ -199,6 +229,7 @@ public class Controller(DbContext dbContext)
         }
     }
 
+ 
 
     private void Commit() => dbContext.Commit();
     private void Rollback() => dbContext.Rollback();

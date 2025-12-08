@@ -13,10 +13,16 @@ public class ListCommand(string? option = null) : ICommand
                     Console.WriteLine(person);
                 }
                 break;
-            case "employee":
+            case "employees":
                 foreach (var emp in controller.GetEmployees(true))
                 {
                     Console.WriteLine(emp);
+                }
+                break;
+            case "course_instances":
+                foreach (var ci in controller.GetActiveCourseInstances())
+                {
+                    Console.WriteLine(ci);
                 }
                 break;
             default:
@@ -28,6 +34,6 @@ public class ListCommand(string? option = null) : ICommand
 
     public void PrintHelp()
     {
-        Console.WriteLine("Lists a table - Usage: list <people/employee>");
+        Console.WriteLine("Lists a table - Usage: list <people/employee/course_instances>");
     }
 }
