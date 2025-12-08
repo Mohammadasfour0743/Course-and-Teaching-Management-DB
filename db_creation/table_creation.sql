@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS exam_hours_factors CASCADE;
 DROP TABLE IF EXISTS admin_hours_factors CASCADE;
 
 
---CREATE TYPE period AS ENUM ('1', '2', '3', '4');
+CREATE TYPE period AS ENUM ('1', '2', '3', '4');
 
 
 CREATE TABLE teaching_activity (
@@ -32,6 +32,10 @@ CREATE TABLE planned_activity (
 	planned_hours INT NOT NULL,
 	teaching_activity_id INT NOT NULL
 );
+
+ALTER TABLE planned_activity
+ADD CONSTRAINT unique_activity_per_course
+UNIQUE (course_instance_id, teaching_activity_id);
 
 
 CREATE TABLE course_instance (
