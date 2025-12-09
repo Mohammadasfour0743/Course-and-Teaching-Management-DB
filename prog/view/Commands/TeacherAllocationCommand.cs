@@ -6,7 +6,7 @@ public class TeacherAllocationCommand(string? option = null, TeacherCommandDTO? 
 {
     public void Execute(Controller.Controller controller)
     {
-        if (string.IsNullOrEmpty(option) || args is null || string.IsNullOrEmpty(args.FirstName) || string.IsNullOrEmpty(args.LastName))
+        if (string.IsNullOrEmpty(option) || args is null )
         {
             PrintHelp();
             return;
@@ -15,9 +15,9 @@ public class TeacherAllocationCommand(string? option = null, TeacherCommandDTO? 
         switch (option)
         {
             case "list":
-                List<TeacherAllocationDTO> ret = controller.GetTeacherAllocation(args.FirstName, args.LastName);
+                List<TeacherAllocationDTO> ret = controller.GetTeacherAllocation(args.EmpId);
                 if(ret.Count == 0)
-                    Console.WriteLine("No results. Check employee name");
+                    Console.WriteLine("No results. Check employee ID");
                 else
                 {
                     foreach (TeacherAllocationDTO ta in ret)
@@ -27,13 +27,13 @@ public class TeacherAllocationCommand(string? option = null, TeacherCommandDTO? 
                 }
                 break;
             case "allocate" when !string.IsNullOrEmpty(args.ActivityName) && !string.IsNullOrEmpty(args.CiInput) && args.Hours > 0:
-                var  allocRes = controller.AllocateTeacherActivity(args.FirstName, args.LastName, args.CiInput,
+                var  allocRes = controller.AllocateTeacherActivity(args.EmpId, args.CiInput,
                     args.ActivityName, args.Hours.Value);
                 Console.WriteLine($"Allocation Successful. {allocRes} rows affected");
                 break;
             case "deallocate" when !string.IsNullOrEmpty(args.ActivityName) && !string.IsNullOrEmpty(args.CiInput):
                 var deallocRes =
-                    controller.DeallocateTeacherActivity(args.FirstName, args.LastName, args.CiInput,
+                    controller.DeallocateTeacherActivity(args.EmpId, args.CiInput,
                         args.ActivityName);
                 Console.WriteLine($"Deallocation Successful. {deallocRes} rows affected");
                 break;
@@ -47,9 +47,9 @@ public class TeacherAllocationCommand(string? option = null, TeacherCommandDTO? 
 
     public void PrintHelp()
     {
-        Console.WriteLine($"Usage: teacher_allocation list <first_name> <last_name> " +
-                          $"\n {new string(' ',24)} allocate <first_name> <last_name> <ci_input> <activity_name> <hours>" +
-                          $"\n {new string(' ',24)} deallocate <first_name> <last_name> <ci_input> <activity_name>");
+        Console.WriteLine($"Usage: teacher_allocation list <employee_id> " +
+                          $"\n {new string(' ',24)} allocate <employee_id> <ci_input> <activity_name> <hours>" +
+                          $"\n {new string(' ',24)} deallocate <employee_id> <ci_input> <activity_name>");
         return;
     }
 }

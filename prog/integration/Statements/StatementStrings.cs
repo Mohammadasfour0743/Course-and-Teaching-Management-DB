@@ -5,7 +5,11 @@ public static class StatementStrings
     public const string GetPersonByLastname = "SELECT id FROM person WHERE last_name = @last_name";
     public const string ListPeople = "SELECT * FROM person";
 
-    public const string ListEmployees = "SELECT * FROM employee WHERE is_active = @is_active";
+    public const string ListEmployees = @"
+SELECT employee.*, (p.first_name || ' ' || p.last_name) AS employee_name
+FROM employee 
+JOIN person AS p ON employee.person_id = p.id
+WHERE employee.is_active = @is_active;";
 
     //3q1:
     //planned and allocated hours for all courses instances if not input is given (input is instance)
@@ -80,7 +84,8 @@ SELECT
 	ci.instance_id,
 	cl.study_period,
 	ta.activity_name,
-	COALESCE(SUM(emp_pa.allocated_hours * ta.factor), 0) AS allocated_hours
+	COALESCE(SUM(emp_pa.allocated_hours * ta.factor), 0) AS allocated_hours,
+	emp.employment_id
 
 FROM employee_planned_activity AS emp_pa
 JOIN planned_activity AS pa ON pa.id = emp_pa.planned_activity_id
@@ -91,7 +96,7 @@ JOIN person ON emp.person_id = person.id
 JOIN teaching_activity AS ta ON ta.id = pa.teaching_activity_id
 LEFT JOIN job_title AS jt ON emp.job_title_id = jt.id
 
-WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND person.first_name = @first_name AND person.last_name = @last_name
+WHERE ci.study_year = TO_CHAR(CURRENT_DATE, 'YYYY') AND emp.employment_id = @emp_id
 GROUP BY cl.course_code, 
 	ci.instance_id,
 	cl.hp,
@@ -99,7 +104,8 @@ GROUP BY cl.course_code,
 	person.last_name,
 	jt.job_title,
 	cl.study_period,
-	ta.activity_name
+	ta.activity_name,
+	emp.employment_id
 ORDER BY course_code;
 ";
 
@@ -119,14 +125,13 @@ SELECT
 	pa.id,
 	@amount_hours
 FROM employee AS e
-JOIN person AS p ON p.id = e.person_id
 JOIN planned_activity AS pa ON pa.course_instance_id = (
 SELECT ci.id
 FROM course_instance AS ci
 WHERE ci.instance_id = @course_instance
 )
 JOIN teaching_activity AS ta ON ta.id=pa.teaching_activity_id
-WHERE p.first_name = @first_name AND p.last_name = @last_name AND ta.activity_name = @teaching_activity;
+WHERE e.employment_id = @emp_id AND ta.activity_name = @teaching_activity;
 ";
 	
 	
@@ -136,8 +141,7 @@ DELETE FROM employee_planned_activity
 WHERE employee_id = (
 	SELECT e.id
 	FROM employee as e
-	JOIN person AS p ON e.person_id = p.id
-	WHERE p.first_name = @first_name AND p.last_name = @last_name
+	WHERE e.employment_id = @emp_id
 )
 AND planned_activity_id IN (
 	SELECT pa.id

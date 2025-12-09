@@ -50,8 +50,6 @@ public class DbContext : IDisposable
         DbConnection.Open();
         CreatePreparedStatements();
         
-
-
     }
 
     private void CreatePreparedStatements()
@@ -92,8 +90,7 @@ public class DbContext : IDisposable
         
         _findTeacherAllocationStmt = PreparedStatement
             .Create(DbConnection, StatementStrings.GetAllocationsOfTeacher)
-            .AddParameter("first_name", NpgsqlDbType.Varchar)
-            .AddParameter("last_name", NpgsqlDbType.Varchar)
+            .AddParameter("emp_id", NpgsqlDbType.Integer)
             .Prepare();
         
         _readInstanceId =  PreparedStatement
@@ -103,8 +100,7 @@ public class DbContext : IDisposable
         
         _createTeacherAllocationStmt = PreparedStatement
             .Create(DbConnection, StatementStrings.AllocateTeachingLoad)
-            .AddParameter("first_name",  NpgsqlDbType.Varchar)
-            .AddParameter("last_name", NpgsqlDbType.Varchar)
+            .AddParameter("emp_id",  NpgsqlDbType.Integer)
             .AddParameter("course_instance", NpgsqlDbType.Varchar)
             .AddParameter("teaching_activity", NpgsqlDbType.Varchar)
             .AddParameter("amount_hours", NpgsqlDbType.Integer)
@@ -112,8 +108,7 @@ public class DbContext : IDisposable
 
         _deleteTeacherAllocationStmt = PreparedStatement
             .Create(DbConnection, StatementStrings.DeallocateTeachingLoad)
-            .AddParameter("first_name", NpgsqlDbType.Varchar)
-            .AddParameter("last_name", NpgsqlDbType.Varchar)
+            .AddParameter("emp_id",  NpgsqlDbType.Integer)
             .AddParameter("course_instance", NpgsqlDbType.Varchar)
             .AddParameter("teaching_activity", NpgsqlDbType.Varchar)
             .Prepare();
@@ -133,10 +128,7 @@ public class DbContext : IDisposable
     }
 
 
-    /// <summary>
-    /// Returns planend and allocated costs for ALL COURSES
-    /// </summary>
-    /// <returns></returns>
+
     public List<CostDTO> FindAllPlannedAllocatedCost()
     {
         List<CostDTO> result = new List<CostDTO>();
@@ -205,13 +197,12 @@ public class DbContext : IDisposable
         }
     }
 
-    public int CreateTeacherAllocation(string firstName, string lastName, string ciInput, string activityName, int hours)
+    public int CreateTeacherAllocation(int empId, string ciInput, string activityName, int hours)
     {
         try
         {
             return _createTeacherAllocationStmt
-                .WithParameter("first_name", firstName)
-                .WithParameter("last_name", lastName)
+                .WithParameter("emp_id", empId)
                 .WithParameter("course_instance", ciInput)
                 .WithParameter("teaching_activity", activityName)
                 .WithParameter("amount_hours", hours)
@@ -224,12 +215,12 @@ public class DbContext : IDisposable
         }
     }
 
-    public int DeleteTeacherAllocation(string firstName, string lastName, string ciInput, string activityName)
+    public int DeleteTeacherAllocation(int empId, string ciInput, string activityName)
     {
         try
         {
-            return _deleteTeacherAllocationStmt.WithParameter("first_name", firstName)
-                .WithParameter("last_name", lastName)
+            return _deleteTeacherAllocationStmt
+                .WithParameter("emp_id", empId)
                 .WithParameter("course_instance", ciInput)
                 .WithParameter("teaching_activity", activityName)
                 .ExecuteNonQuery(Transaction);
@@ -291,11 +282,7 @@ public class DbContext : IDisposable
         }
     }
 
-    /// <summary>
-    /// gets all teaching activities of a course and displays them
-    /// </summary>
-    /// <param name="ciInput"></param>
-    /// <returns></returns>
+
     public List<CourseActivityDTO> FindCourseActivity(string ciInput)
     {
         List<CourseActivityDTO> result = new List<CourseActivityDTO>();
@@ -323,14 +310,13 @@ public class DbContext : IDisposable
         }
     }
 
-    public List<TeacherAllocationDTO> FindTeacherActivity(string firstName, string lastName)
+    public List<TeacherAllocationDTO> FindTeacherActivity(int empId)
     {
         List<TeacherAllocationDTO> result = new List<TeacherAllocationDTO>();
         try
         {
             using var reader = _findTeacherAllocationStmt
-                .WithParameter("first_name", firstName)
-                .WithParameter("last_name", lastName)
+                .WithParameter("emp_id", empId)
                 .ExecuteReader(Transaction);
             
             while (reader.Read())
@@ -341,7 +327,8 @@ public class DbContext : IDisposable
                 var period = reader.GetFieldValue<PeriodENUM>(3);
                 var activityName = reader.GetString(4);
                 var allocatedHours = reader.GetInt32(5);
-                result.Add(new TeacherAllocationDTO(empName, courseCode, courseInstance, period, activityName, allocatedHours));
+                var employeeId = reader.GetInt32(6);
+                result.Add(new TeacherAllocationDTO(empName, employeeId, courseCode, courseInstance, period, activityName, allocatedHours));
             }
             return result;
         }
@@ -378,7 +365,7 @@ public class DbContext : IDisposable
                         Id = reader.GetInt32(reader.GetOrdinal("id")),
                         EmploymentId = reader.GetInt32(reader.GetOrdinal("employment_id")),
                         JobTitleId = reader.GetInt32(reader.GetOrdinal("job_title_id")),
-                        PersonId = reader.GetInt32(reader.GetOrdinal("person_id")),
+                        Name = reader.GetString(reader.GetOrdinal("employee_name")),
                         DepartmentId = reader.GetInt32(reader.GetOrdinal("department_id")),
                         ManagerId =  reader.GetFieldValue<int?>(reader.GetOrdinal("manager_id")),
                         IsActive = reader.GetBoolean(reader.GetOrdinal("is_active")),

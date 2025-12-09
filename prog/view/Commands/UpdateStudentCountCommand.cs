@@ -19,7 +19,7 @@ public class UpdateStudentCountCommand( string? ciInput = null ,int? numStudents
 
     public void PrintHelp()
     {
-        Console.WriteLine("Usage: ");
+        Console.WriteLine("Usage: update_student_number <ci_id> <new_num_students>");
         return;
     }
 }

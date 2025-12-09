@@ -31,6 +31,8 @@ public class CostCommand(string? courseInstance = null) : ICommand
 
     public void PrintHelp()
     {
-       // throw new NotImplementedException();
+        Console.WriteLine($"Usage: get_cost" +
+                          $"\n {new string(' ',14)} <ci_id> " 
+        );
     }
 }

@@ -80,14 +80,21 @@ public class CommandHandler(Controller.Controller controller)
                 }
                 break;
             
-            case "teacher_allocation"  when split.Length > 3:
-                var teacherCommandInput = new TeacherCommandDTO(
-                    split[2],
-                    split[3],
-                    GetIfExists(4, split),
-                    GetIfExists(5, split),
-                    ParseIntOrNull(GetIfExists(6, split)));
-                command = new TeacherAllocationCommand(split[1].ToLowerInvariant(),teacherCommandInput);
+            case "teacher_allocation"  when split.Length > 2:
+                if (int.TryParse(split[2], out int empId))
+                {
+                    var teacherCommandInput = new TeacherCommandDTO(
+                        empId,
+                        GetIfExists(3, split),
+                        GetIfExists(4, split),
+                        ParseIntOrNull(GetIfExists(5, split)));
+                    command = new TeacherAllocationCommand(split[1].ToLowerInvariant(),teacherCommandInput);
+                }
+                else
+                {
+                    command = new InvalidCommand();
+                }
+               
                 break;
             case "activity" when split.Length > 2:
                 bool isCreate = split[1].Equals("create", StringComparison.InvariantCultureIgnoreCase);

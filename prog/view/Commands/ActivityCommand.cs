@@ -13,13 +13,13 @@ public class ActivityCommand(string? option = null, ActivityCommandDto? args = n
         }
         switch (option)
         {
-            case "create" when args.Factor is { } factor && !string.IsNullOrEmpty(args.ActivityName):
-                var createRes = controller.CreateActivity(args.ActivityName, factor);
-                Console.WriteLine($"{createRes} rows affected");
+            case "create" when args.Factor > 0 && !string.IsNullOrEmpty(args.ActivityName):
+                var createRes = controller.CreateActivity(args.ActivityName, args.Factor.Value);
+                Console.WriteLine($"Successful. {createRes} rows affected");
                 break;
             case "assign" when !string.IsNullOrEmpty(args.ActivityName) && args.CiInput is not null && args.PlannedHours is > 0:
                 var assignRes = controller.AssignActivityToCourse(args.CiInput, args.PlannedHours.Value, args.ActivityName);
-                Console.WriteLine($"{assignRes} rows affected");
+                Console.WriteLine($"Successful. {assignRes} rows affected");
                 break;
             case "list" when args.CiInput is not null:
                 List<CourseActivityDTO> ret = controller.GetCourseActivity(args.CiInput);

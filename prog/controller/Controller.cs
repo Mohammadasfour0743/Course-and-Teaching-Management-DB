@@ -75,9 +75,9 @@ public class Controller(DbContext dbContext)
         return dbContext.FindCourseActivity(ciInput);
     }
 
-    public List<TeacherAllocationDTO> GetTeacherAllocation(string firstName, string lastName)
+    public List<TeacherAllocationDTO> GetTeacherAllocation(int empId)
     {
-        return dbContext.FindTeacherActivity(firstName, lastName);
+        return dbContext.FindTeacherActivity(empId);
     }
 
     public int UpdateStudentCount( int newNumStudents, string ciInput)
@@ -110,14 +110,14 @@ public class Controller(DbContext dbContext)
     
    
 
-    public int AllocateTeacherActivity(string firstName, string lastName, string ciInput, string activityName, int hours)
+    public int AllocateTeacherActivity(int empId, string ciInput, string activityName, int hours)
     {
         try
         {
-            int affected = dbContext.CreateTeacherAllocation(firstName, lastName, ciInput, activityName, hours);
+            int affected = dbContext.CreateTeacherAllocation(empId, ciInput, activityName, hours);
             if (affected <= 0)
             {
-                throw new InvalidOperationException("Unable to create a new TeacherAllocation. Name or course instance id is wrong");
+                throw new InvalidOperationException("Unable to create a new TeacherAllocation. employee id or course instance id is wrong");
             }
 
             Commit();
@@ -146,11 +146,11 @@ public class Controller(DbContext dbContext)
         
     }
 
-    public int DeallocateTeacherActivity(string firstName, string lastName, string ciInput, string activityName)
+    public int DeallocateTeacherActivity(int empId, string ciInput, string activityName)
     {
         try
         {
-            int affected = dbContext.DeleteTeacherAllocation(firstName, lastName, ciInput, activityName);
+            int affected = dbContext.DeleteTeacherAllocation(empId, ciInput, activityName);
             if (affected <= 0)
             {
                 throw new InvalidOperationException("Unable to delete TeacherAllocation. Input is wrong");

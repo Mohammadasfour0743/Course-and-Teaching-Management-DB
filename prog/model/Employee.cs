@@ -5,7 +5,7 @@ public class Employee : IEquatable<Employee>
     public int Id { get; init; }
     public int EmploymentId { get; set; }
     public int JobTitleId { get; set; }
-    public int PersonId { get; set; }
+    public string Name { get; set; } = string.Empty;
     public int DepartmentId { get; set; }
     public int? ManagerId { get; set; }
     public bool IsActive { get; set; }
@@ -14,7 +14,7 @@ public class Employee : IEquatable<Employee>
     
     public override string ToString()
     {
-        return $"ID: {Id} , {EmploymentId}, {JobTitleId}, {DepartmentId}, {ManagerId}, {IsActive}";
+        return $"ID: {Id} , Name: {Name}, Employment ID: {EmploymentId}, Job Title ID: {JobTitleId}, Department ID: {DepartmentId},Manager ID: {ManagerId},Activity: {IsActive}";
     }
     
     
