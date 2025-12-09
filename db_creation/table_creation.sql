@@ -33,10 +33,11 @@ CREATE TABLE planned_activity (
 	teaching_activity_id INT NOT NULL
 );
 
+/*
 ALTER TABLE planned_activity
 ADD CONSTRAINT unique_activity_per_course
 UNIQUE (course_instance_id, teaching_activity_id);
-
+*/
 
 CREATE TABLE course_instance (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
