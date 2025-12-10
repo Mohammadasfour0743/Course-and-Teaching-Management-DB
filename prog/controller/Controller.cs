@@ -8,24 +8,24 @@ public class Controller(DbContext dbContext)
 {
     public List<Person> GetPeople()
     {
-        return dbContext.GetPeople();
+        return dbContext.ReadPeople();
     }
 
     public List<Employee> GetEmployees(bool? isActive)
     {
-        return dbContext.GetEmployees(isActive);
+        return dbContext.ReadEmployees(isActive);
     }
 
     public List<CostDTO> GetAllCosts()
     {
-        return dbContext.FindAllPlannedAllocatedCost();
+        return dbContext.ReadAllPlannedAllocatedCost();
     }
 
     public CostDTO GetCost(string ciInput)
     {
         try
         {
-            return dbContext.FindPlannedAllocatedCost(ciInput);
+            return dbContext.ReadPlannedAllocatedCost(ciInput);
         }
         catch (InvalidOperationException e)
         {
@@ -44,7 +44,7 @@ public class Controller(DbContext dbContext)
         try
         {
             List<CourseInstanceDTO> instances = new List<CourseInstanceDTO>();
-            List<CostDTO> allCost = dbContext.FindAllPlannedAllocatedCost();
+            List<CostDTO> allCost = dbContext.ReadAllPlannedAllocatedCost();
             if (allCost is null)
             {
                 throw new InvalidOperationException("There are no course instances.");
@@ -72,12 +72,12 @@ public class Controller(DbContext dbContext)
     public List<CourseActivityDTO> GetCourseActivity(string ciInput)
     {
         
-        return dbContext.FindCourseActivity(ciInput);
+        return dbContext.ReadCourseActivity(ciInput);
     }
 
     public List<TeacherAllocationDTO> GetTeacherAllocation(int empId)
     {
-        return dbContext.FindTeacherActivity(empId);
+        return dbContext.ReadTeacherActivity(empId);
     }
 
     public int UpdateStudentCount( int newNumStudents, string ciInput)

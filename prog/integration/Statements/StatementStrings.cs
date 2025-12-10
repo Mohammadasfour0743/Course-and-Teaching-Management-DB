@@ -2,7 +2,6 @@ namespace DbCourse.Integration.Statements;
 
 public static class StatementStrings
 {
-    public const string GetPersonByLastname = "SELECT id FROM person WHERE last_name = @last_name";
     public const string ListPeople = "SELECT * FROM person";
 
     public const string ListEmployees = @"
@@ -108,13 +107,7 @@ GROUP BY cl.course_code,
 	emp.employment_id
 ORDER BY course_code;
 ";
-
-
-	public const string ReadInstanceId = @"
-SELECT ci.instance_id 
-FROM course_instance AS ci
-WHERE instance_id = @instance_id
-FOR NO KEY UPDATE;";
+	
 	
 	
 	//allocate new teaching activity to a teacher. The activity for this ci must exist before.

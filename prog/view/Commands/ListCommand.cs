@@ -34,6 +34,10 @@ public class ListCommand(string? option = null) : ICommand
 
     public void PrintHelp()
     {
-        Console.WriteLine("Lists a table - Usage: list <people/employee/course_instances>");
+        Console.WriteLine($"Usage: list people" +
+                          $"\n {new string(' ',10)} employees" +
+                          $"\n {new string(' ',10)} course_instances" 
+                           
+        );
     }
 }

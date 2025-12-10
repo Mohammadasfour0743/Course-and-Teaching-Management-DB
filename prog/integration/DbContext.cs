@@ -54,10 +54,7 @@ public class DbContext : IDisposable
 
     private void CreatePreparedStatements()
     {
-        _getPersonStmt = PreparedStatement
-            .Create(DbConnection,StatementStrings.GetPersonByLastname)
-            .AddParameter("last_name",NpgsqlDbType.Varchar)
-            .Prepare();
+       
         
         _getPeopleStmt = PreparedStatement
             .Create(DbConnection, StatementStrings.ListPeople)
@@ -93,10 +90,7 @@ public class DbContext : IDisposable
             .AddParameter("emp_id", NpgsqlDbType.Integer)
             .Prepare();
         
-        _readInstanceId =  PreparedStatement
-            .Create(DbConnection, StatementStrings.ReadInstanceId)
-            .AddParameter("instance_id", NpgsqlDbType.Varchar)
-            .Prepare();
+      
         
         _createTeacherAllocationStmt = PreparedStatement
             .Create(DbConnection, StatementStrings.AllocateTeachingLoad)
@@ -129,7 +123,7 @@ public class DbContext : IDisposable
 
 
 
-    public List<CostDTO> FindAllPlannedAllocatedCost()
+    public List<CostDTO> ReadAllPlannedAllocatedCost()
     {
         List<CostDTO> result = new List<CostDTO>();
         try
@@ -155,7 +149,7 @@ public class DbContext : IDisposable
         }
     }
 
-    public CostDTO FindPlannedAllocatedCost(string ciInput)
+    public CostDTO ReadPlannedAllocatedCost(string ciInput)
     {
         try
         {
@@ -267,23 +261,10 @@ public class DbContext : IDisposable
     
     
 
-    public string ReadInstanceIdLock(string ciInput)
-    {
-        try
-        {
-            using var reader = _readInstanceId
-                .WithParameter("course_instance", ciInput)
-                .ExecuteReader(Transaction);
-            return reader.GetString(0);
-        }
-        catch (Exception e)
-        {
-            throw;
-        }
-    }
+   
 
 
-    public List<CourseActivityDTO> FindCourseActivity(string ciInput)
+    public List<CourseActivityDTO> ReadCourseActivity(string ciInput)
     {
         List<CourseActivityDTO> result = new List<CourseActivityDTO>();
         try
@@ -310,7 +291,7 @@ public class DbContext : IDisposable
         }
     }
 
-    public List<TeacherAllocationDTO> FindTeacherActivity(int empId)
+    public List<TeacherAllocationDTO> ReadTeacherActivity(int empId)
     {
         List<TeacherAllocationDTO> result = new List<TeacherAllocationDTO>();
         try
@@ -349,7 +330,7 @@ public class DbContext : IDisposable
 /// </summary>
 /// <param name="isActive"></param>
 /// <returns></returns>
-    public List<Employee> GetEmployees(bool? isActive=true)
+    public List<Employee> ReadEmployees(bool? isActive=true)
     {
         List<Employee> result = new List<Employee>();
         try
@@ -383,13 +364,10 @@ public class DbContext : IDisposable
     }
     
 
-    public int GetPersonId(string lastName)
-    {
-       return _getPersonStmt.WithParameter("last_name", lastName).ExecuteScalar<int>(Transaction);
-    }
+    
 
     //todo: move col names to constants?
-    public List<Person> GetPeople()
+    public List<Person> ReadPeople()
     {
         List<Person> result = [];
         using var reader = _getPeopleStmt.ExecuteReader(Transaction);

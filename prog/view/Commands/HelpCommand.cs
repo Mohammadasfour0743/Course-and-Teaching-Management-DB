@@ -22,6 +22,6 @@ public class HelpCommand : ICommand
 
     public void PrintHelp()
     {
-        Console.WriteLine("Prints help information - Usage: help");
+        
     }
 }
