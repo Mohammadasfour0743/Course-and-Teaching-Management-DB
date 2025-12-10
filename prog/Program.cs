@@ -11,8 +11,12 @@ class Program
     static void Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
-       
-        Env.Load("C:\\Users\\Mohammad Asfour\\Desktop\\Course-and-Teaching-Management-DB\\prog\\.env");
+        if (args.Length < 1)
+        {
+            Console.WriteLine("Please input the path to the .env file");
+            return;
+        }
+        Env.Load(args[0]);
         string connectionString = Env.GetString("CONNECTION_STRING");
         if (string.IsNullOrWhiteSpace(connectionString))
         {

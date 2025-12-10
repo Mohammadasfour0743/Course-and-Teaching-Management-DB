@@ -8,4 +8,12 @@ public record CostDTO(
     int NumStudents,
     double PlannedCost,
     double AllocatedCost
-    );
+)
+{
+    public override string ToString()
+    {
+        return $"Course code = {CourseCode}, Course instance = {CourseInstance}, " +
+               $"Period: {Period}, Study year: {StudyYear}, Number of students: {NumStudents}," +
+               $" Planned cost = {PlannedCost}, Allocated cost = {AllocatedCost}";
+    }
+}
