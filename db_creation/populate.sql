@@ -13,13 +13,13 @@ VALUES
 -- 2) Course layouts
 INSERT INTO course_layout (course_code, course_name, min_students, max_students, hp, is_active, study_period)
 VALUES
-('DH2642', 'Mobile Development', 10, 60, 7.5, TRUE, '1'),
-('DH2401', 'Algorithms and Data Structures', 20, 120, 7.5, TRUE, '2'),
-('DH2620', 'Operating Systems', 15, 80, 7.5, TRUE, '1'),
-('DH2005', 'Computer Networks', 15, 80, 7.5, TRUE, '2'),
-('DH2010', 'Distributed Systems', 20, 100, 7.5, TRUE, '1'),
-('DH2100', 'Human–Computer Interaction', 10, 70, 6.0, TRUE, '1'),
-('DH2500', 'Machine Learning Fundamentals', 20, 120, 7.5, TRUE, '2'),
+('DH2642', 'Mobile Development', 10, 200, 7.5, TRUE, '1'),
+('DH2401', 'Algorithms and Data Structures', 20, 250, 7.5, TRUE, '2'),
+('DH2620', 'Operating Systems', 15, 250, 7.5, TRUE, '1'),
+('DH2005', 'Computer Networks', 15, 180, 7.5, TRUE, '1'),
+('DH2010', 'Distributed Systems', 20, 190, 7.5, TRUE, '1'),
+('DH2100', 'Human–Computer Interaction', 10, 180, 6.0, TRUE, '1'),
+('DH2500', 'Machine Learning Fundamentals', 20, 200, 7.5, TRUE, '2'),
 ('DH2600', 'Databases', 15, 100, 7.5, TRUE, '2');
 
 
@@ -145,20 +145,20 @@ UPDATE department SET manager_id = 4 WHERE id = 2;  -- Eng manager = Karl
 -- 9) Salary
 INSERT INTO salary (salary_amount, date_given, employee_id)
 VALUES
-(45000, CURRENT_DATE, 1),
-(38000, CURRENT_DATE, 2),
-(32000, CURRENT_DATE, 3),
-(40000, CURRENT_DATE, 4),
-(41000, CURRENT_DATE, 5),
-(34000, CURRENT_DATE, 6),
-(46000, CURRENT_DATE, 7),
-(36000, CURRENT_DATE, 8),
-(38000, CURRENT_DATE, 9),
-(33000, CURRENT_DATE, 10),
-(42000, CURRENT_DATE, 11),
-(45000, CURRENT_DATE, 12),
-(35000, CURRENT_DATE, 13),
-(36500, CURRENT_DATE, 14);
+(450, CURRENT_DATE, 1),
+(380, CURRENT_DATE, 2),
+(320, CURRENT_DATE, 3),
+(400, CURRENT_DATE, 4),
+(410, CURRENT_DATE, 5),
+(340, CURRENT_DATE, 6),
+(460, CURRENT_DATE, 7),
+(360, CURRENT_DATE, 8),
+(380, CURRENT_DATE, 9),
+(330, CURRENT_DATE, 10),
+(420, CURRENT_DATE, 11),
+(450, CURRENT_DATE, 12),
+(350, CURRENT_DATE, 13),
+(365, CURRENT_DATE, 14);
 
 
 -- 10) Phones
