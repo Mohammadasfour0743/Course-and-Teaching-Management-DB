@@ -456,6 +456,13 @@ DECLARE
     activity_limit INT;
     new_period period;
 BEGIN
+
+    PERFORM 1
+    FROM employee AS e
+    WHERE e.id = NEW.employee_id
+    FOR UPDATE;
+
+
 --get the period for the new planned_activity
     SELECT cl.study_period
     INTO new_period
